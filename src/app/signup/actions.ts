@@ -11,6 +11,7 @@ export async function signupDeveloper(email: string, password: string): Promise<
     email,
     password,
     options: {
+      data: { intended_role: 'developer' },
       emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent('/onboarding?role=developer')}`,
     },
   })
@@ -29,6 +30,7 @@ export async function signupClient(email: string): Promise<{ error?: string }> {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
+      data: { intended_role: 'client' },
       emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent('/onboarding?role=client')}`,
     },
   })

@@ -4,13 +4,15 @@ import OnboardingForm from './OnboardingForm'
 
 export default async function OnboardingPage(props: { searchParams: Promise<{ role?: string }> }) {
   const searchParams = await props.searchParams;
-  const role = searchParams.role || 'developer'
   const supabase = await createClient()
 
   const { data: { user }, error: userError } = await supabase.auth.getUser()
   if (userError || !user) {
     redirect('/login')
   }
+
+  // Fallback chain: URL query param -> user metadata -> 'developer'
+  const role = searchParams.role || user.user_metadata?.intended_role || 'developer'
 
   // Check if profile already exists
   const { data: profile } = await supabase
