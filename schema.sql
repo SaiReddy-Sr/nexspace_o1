@@ -178,10 +178,7 @@ create trigger trg_touch_conversation
 -- 5. STORAGE BUCKET POLICIES (run after creating the bucket
 --    named "project-media" in Supabase Dashboard > Storage)
 -- ---------------------------------------------------------
--- Public read
-create policy "Public read access to project media"
-  on storage.objects for select
-  using (bucket_id = 'project-media');
+
 
 -- Authenticated developers can upload only into a folder
 -- matching their own user id, e.g. project-media/{auth.uid()}/file.webp

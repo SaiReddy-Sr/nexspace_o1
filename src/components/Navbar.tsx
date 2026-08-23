@@ -7,15 +7,17 @@ export default async function Navbar() {
   const { data: { user } } = await supabase.auth.getUser()
   
   let username = null
+  let role = null
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('username')
+      .select('username, role')
       .eq('id', user.id)
       .single()
     
     if (profile) {
       username = profile.username
+      role = profile.role
     }
   }
 
@@ -32,9 +34,16 @@ export default async function Navbar() {
             {user ? (
               <>
                 {username ? (
-                  <Link href={`/profile/${username}`} className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
-                    @{username}
-                  </Link>
+                  <>
+                    {role === 'developer' && (
+                      <Link href="/dashboard/new-project" className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md">
+                        New Project
+                      </Link>
+                    )}
+                    <Link href={`/profile/${username}`} className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
+                      @{username}
+                    </Link>
+                  </>
                 ) : (
                   <Link href="/onboarding" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                     Complete Profile
