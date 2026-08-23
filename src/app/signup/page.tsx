@@ -1,11 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signupDeveloper, signupClient } from './actions'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
-export default function SignupPage() {
+function SignupForm() {
   const [role, setRole] = useState<'developer' | 'client'>('developer')
+  const searchParams = useSearchParams()
+  const nextParam = searchParams.get('next') || undefined
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -16,14 +19,14 @@ export default function SignupPage() {
     
     if (role === 'developer') {
       const password = formData.get('password') as string
-      const { error } = await signupDeveloper(email, password)
+      const { error } = await signupDeveloper(email, password, nextParam)
       if (error) {
         setMessage(error)
       } else {
         setMessage('Check your email to confirm your account.')
       }
     } else {
-      const { error } = await signupClient(email)
+      const { error } = await signupClient(email, nextParam)
       if (error) {
         setMessage(error)
       } else {
@@ -125,5 +128,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupForm />
+    </Suspense>
   )
 }

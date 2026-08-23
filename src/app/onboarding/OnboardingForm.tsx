@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createProfile } from './actions'
 
-export default function OnboardingForm({ role }: { role: string }) {
+export default function OnboardingForm({ role, nextParam }: { role: string; nextParam?: string }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -24,6 +24,7 @@ export default function OnboardingForm({ role }: { role: string }) {
       await handleSubmit(new FormData(e.currentTarget))
     }} className="mt-8 space-y-6">
       <input type="hidden" name="role" value={role} />
+      {nextParam && <input type="hidden" name="next" value={nextParam} />}
       
       <div className="space-y-4 rounded-md shadow-sm">
         <div>

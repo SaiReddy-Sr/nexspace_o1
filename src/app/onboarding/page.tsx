@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import OnboardingForm from './OnboardingForm'
 
-export default async function OnboardingPage(props: { searchParams: Promise<{ role?: string }> }) {
+export default async function OnboardingPage(props: { searchParams: Promise<{ role?: string; next?: string }> }) {
   const searchParams = await props.searchParams;
   const supabase = await createClient()
 
@@ -13,6 +13,7 @@ export default async function OnboardingPage(props: { searchParams: Promise<{ ro
 
   // Fallback chain: URL query param -> user metadata -> 'developer'
   const role = searchParams.role || user.user_metadata?.intended_role || 'developer'
+  const nextParam = searchParams.next
 
   // Check if profile already exists
   const { data: profile } = await supabase
@@ -22,6 +23,9 @@ export default async function OnboardingPage(props: { searchParams: Promise<{ ro
     .single()
 
   if (profile) {
+    if (nextParam) {
+      redirect(nextParam)
+    }
     redirect(`/profile/${profile.username}`)
   }
 
@@ -33,7 +37,7 @@ export default async function OnboardingPage(props: { searchParams: Promise<{ ro
             Complete your profile
           </h2>
         </div>
-        <OnboardingForm role={role} />
+        <OnboardingForm role={role} nextParam={nextParam} />
       </div>
     </div>
   )

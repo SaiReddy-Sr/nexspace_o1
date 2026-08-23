@@ -36,5 +36,11 @@ export async function createProfile(formData: FormData) {
     return { error: error.message }
   }
 
+  const nextParam = formData.get('next') as string
+
+  if (nextParam) {
+    redirect(nextParam)
+  }
+
   redirect(`/profile/${username}`)
 }
