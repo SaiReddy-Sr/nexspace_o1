@@ -19,7 +19,10 @@ export default function OnboardingForm({ role }: { role: string }) {
   }
 
   return (
-    <form action={handleSubmit} className="mt-8 space-y-6">
+    <form onSubmit={async (e) => {
+      e.preventDefault()
+      await handleSubmit(new FormData(e.currentTarget))
+    }} className="mt-8 space-y-6">
       <input type="hidden" name="role" value={role} />
       
       <div className="space-y-4 rounded-md shadow-sm">
