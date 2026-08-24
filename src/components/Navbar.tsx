@@ -40,6 +40,9 @@ export default async function Navbar() {
                         New Project
                       </Link>
                     )}
+                    <Link href="/dashboard/messages" className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
+                      Messages
+                    </Link>
                     <Link href={`/profile/${username}`} className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
                       @{username}
                     </Link>

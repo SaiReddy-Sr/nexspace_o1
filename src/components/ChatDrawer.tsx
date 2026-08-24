@@ -3,21 +3,31 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Tables } from '@/types/supabase'
+import { sendMessage, blockUser, reportUser } from '@/app/dashboard/messages/actions'
 
 interface ChatDrawerProps {
   conversationId: string
   currentUserId: string
   onClose: () => void
+  onBlock?: (conversationId: string) => void
 }
 
 type MessageRow = Tables<'messages'>
 
-export default function ChatDrawer({ conversationId, currentUserId, onClose }: ChatDrawerProps) {
+export default function ChatDrawer({ conversationId, currentUserId, onClose, onBlock }: ChatDrawerProps) {
   const [messages, setMessages] = useState<MessageRow[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const [otherParticipant, setOtherParticipant] = useState<{ id: string; username: string } | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
+  const [reportSuccess, setReportSuccess] = useState(false)
+  const [blocking, setBlocking] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -32,6 +42,28 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose }: C
   useEffect(() => {
     const supabase = createClient()
     let isMounted = true
+
+    // Fetch conversation info for participant details
+    async function fetchConversationDetails() {
+      const { data, error } = await supabase
+        .from('conversations')
+        .select(`
+          initiator_id,
+          recipient_id,
+          initiator:initiator_id ( username ),
+          recipient:recipient_id ( username )
+        `)
+        .eq('id', conversationId)
+        .single()
+
+      if (!error && data && isMounted) {
+        const isInitiator = data.initiator_id === currentUserId
+        const otherId = isInitiator ? data.recipient_id : data.initiator_id
+        const otherProfile = isInitiator ? data.recipient : data.initiator
+        const username = (otherProfile as unknown as { username: string })?.username || 'Participant'
+        setOtherParticipant({ id: otherId, username })
+      }
+    }
 
     // Fetch initial messages for this conversation
     async function fetchMessages() {
@@ -50,6 +82,7 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose }: C
       if (isMounted) setLoading(false)
     }
 
+    fetchConversationDetails()
     fetchMessages()
 
     // Open exactly one realtime channel scoped to this conversation
@@ -80,7 +113,7 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose }: C
       isMounted = false
       supabase.removeChannel(channel)
     }
-  }, [conversationId])
+  }, [conversationId, currentUserId])
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
@@ -91,41 +124,162 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose }: C
     setError(null)
     setNewMessage('')
 
-    const supabase = createClient()
-    const { error: insertError } = await supabase
-      .from('messages')
-      .insert({
-        conversation_id: conversationId,
-        sender_id: currentUserId,
-        content: content
-      })
+    const result = await sendMessage(conversationId, content)
 
     setSending(false)
 
-    if (insertError) {
-      setError(insertError.message)
+    if (result.error) {
+      setError(result.error)
       setNewMessage(content)
+    }
+  }
+
+  async function handleBlock() {
+    if (!otherParticipant || blocking) return
+    if (!window.confirm(`Are you sure you want to block @${otherParticipant.username}?`)) return
+
+    setBlocking(true)
+    setError(null)
+
+    const result = await blockUser(conversationId, otherParticipant.id)
+    setBlocking(false)
+    setMenuOpen(false)
+
+    if (result.error) {
+      setError(result.error)
+    } else {
+      if (onBlock) {
+        onBlock(conversationId)
+      }
+      onClose()
+    }
+  }
+
+  async function handleReportSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!otherParticipant || reportSubmitting) return
+
+    setReportSubmitting(true)
+    setError(null)
+
+    const result = await reportUser(conversationId, otherParticipant.id, reportReason)
+    setReportSubmitting(false)
+
+    if (result.error) {
+      setError(result.error)
+    } else {
+      setReportSuccess(true)
+      setReportReason('')
+      setTimeout(() => {
+        setShowReportModal(false)
+        setReportSuccess(false)
+        setMenuOpen(false)
+      }, 1500)
     }
   }
 
   return (
     <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white dark:bg-gray-900 shadow-2xl border-l border-gray-200 dark:border-gray-800 flex flex-col transition-transform duration-300 ease-in-out">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 relative">
         <div className="flex items-center space-x-2">
           <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
-          <h2 className="text-base font-bold text-gray-900 dark:text-white">Chat</h2>
+          <div>
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">
+              {otherParticipant ? `@${otherParticipant.username}` : 'Chat'}
+            </h2>
+          </div>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-          aria-label="Close chat"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+
+        <div className="flex items-center space-x-2">
+          {/* Header Action Menu */}
+          {otherParticipant && (
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none"
+                aria-label="Options"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                </svg>
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50 py-1 text-sm">
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false)
+                      setShowReportModal(true)
+                    }}
+                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Report
+                  </button>
+                  <button
+                    onClick={handleBlock}
+                    disabled={blocking}
+                    className="w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    {blocking ? 'Blocking...' : 'Block'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+            aria-label="Close chat"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
       </div>
+
+      {/* Report Modal / Panel Overlay */}
+      {showReportModal && (
+        <div className="p-4 bg-gray-50 dark:bg-gray-800/90 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-2">
+            Report @{otherParticipant?.username}
+          </h3>
+          {reportSuccess ? (
+            <div className="text-xs text-green-600 dark:text-green-400 font-medium py-2">
+              Report submitted. Thank you.
+            </div>
+          ) : (
+            <form onSubmit={handleReportSubmit} className="space-y-2">
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="Reason for report (optional)"
+                rows={2}
+                className="w-full text-xs p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowReportModal(false)}
+                  className="px-2.5 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={reportSubmitting}
+                  className="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded font-medium disabled:opacity-50"
+                >
+                  {reportSubmitting ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
 
       {/* Message List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
