@@ -25,9 +25,12 @@ export default async function Navbar() {
     <nav className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex-shrink-0 flex items-center">
+          <div className="flex-shrink-0 flex items-center space-x-6">
             <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
               nexspace
+            </Link>
+            <Link href="/requests" className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
+              Requests
             </Link>
           </div>
           <div className="flex items-center space-x-4">
@@ -38,6 +41,11 @@ export default async function Navbar() {
                     {role === 'developer' && (
                       <Link href="/dashboard/new-project" className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md">
                         New Project
+                      </Link>
+                    )}
+                    {role === 'client' && (
+                      <Link href="/requests/new" className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md">
+                        Post a Request
                       </Link>
                     )}
                     <Link href="/dashboard/messages" className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">
