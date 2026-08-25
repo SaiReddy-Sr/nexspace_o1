@@ -22,6 +22,7 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
     .select('*')
     .eq('developer_id', profile.id)
     .order('created_at', { ascending: false })
+    .limit(50)
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
