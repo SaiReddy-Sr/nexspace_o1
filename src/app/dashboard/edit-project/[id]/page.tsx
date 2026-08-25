@@ -30,12 +30,12 @@ export default async function EditProjectPage(props: { params: Promise<{ id: str
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-foreground tracking-tight">
           Edit Project
         </h1>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 sm:p-8">
+      <div className="bg-card border border-border rounded-xl p-6 sm:p-8 shadow-sm">
         <EditProjectForm project={project} />
       </div>
     </div>

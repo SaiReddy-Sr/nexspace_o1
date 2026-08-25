@@ -75,44 +75,48 @@ export default async function RequestDetailPage(props: { params: Promise<{ id: s
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-8 shadow-sm">
+      <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
         <div className="flex justify-between items-start mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">
             {problem.title}
           </h1>
-          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
+          <span className="inline-flex shrink-0 items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-mono font-medium text-accent">
             {problem.status}
           </span>
         </div>
 
-        <div className="flex items-center space-x-4 mb-8 pb-8 border-b border-gray-200 dark:border-gray-800">
-          <Link href={`/profile/${problem.profiles.username}`} className="group flex items-center space-x-3">
+        <div className="flex items-center space-x-4 mb-8 pb-8 border-b border-border">
+          <Link href={`/profile/${problem.profiles.username}`} className="group flex items-center space-x-4">
             {problem.profiles.avatar_url ? (
               <img
                 src={problem.profiles.avatar_url}
                 alt={problem.profiles.username}
-                className="w-12 h-12 rounded-full bg-gray-200 object-cover"
+                className="w-12 h-12 rounded-full border border-border object-cover"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                <span className="text-xl font-medium text-gray-500 dark:text-gray-400">
-                  {problem.profiles.username.charAt(0).toUpperCase()}
+              <div className="w-12 h-12 rounded-full bg-border flex items-center justify-center border border-border">
+                <span className="text-xl font-bold text-foreground/50 uppercase">
+                  {problem.profiles.username.charAt(0)}
                 </span>
               </div>
             )}
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:underline">
+              <p className="text-sm font-mono font-bold text-foreground group-hover:text-accent transition-colors">
                 @{problem.profiles.username}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {new Date(problem.created_at).toLocaleDateString()}
+              <p className="text-xs font-mono text-foreground/50 mt-1">
+                {new Date(problem.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: '2-digit'
+                })}
               </p>
             </div>
           </Link>
         </div>
 
-        <div className="prose dark:prose-invert max-w-none mb-8">
-          <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+        <div className="prose prose-invert max-w-none mb-10">
+          <p className="text-foreground/80 whitespace-pre-wrap leading-relaxed">
             {problem.description || "No description provided."}
           </p>
         </div>
@@ -122,7 +126,7 @@ export default async function RequestDetailPage(props: { params: Promise<{ id: s
             {problem.tags.map((tag: string, index: number) => (
               <span
                 key={index}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                className="inline-flex items-center px-3 py-1.5 rounded-[4px] text-[11px] font-mono font-bold bg-accent/10 text-accent uppercase tracking-wider"
               >
                 {tag}
               </span>
@@ -131,10 +135,10 @@ export default async function RequestDetailPage(props: { params: Promise<{ id: s
         )}
 
         {!user ? (
-          <div className="mt-8 border-t border-gray-200 dark:border-gray-800 pt-8">
+          <div className="mt-8 border-t border-border pt-8">
             <Link
               href={`/signup?next=${encodeURIComponent(`/requests/${problemId}`)}`}
-              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors w-full sm:w-auto"
+              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-bold rounded-md text-white bg-accent hover:bg-accent-hover shadow-sm transition-colors w-full sm:w-auto"
             >
               Sign up to Express Interest
             </Link>

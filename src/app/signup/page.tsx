@@ -39,10 +39,10 @@ function SignupForm() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-xl border border-border shadow-sm">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h2 className="text-center text-3xl font-bold tracking-tight text-foreground">
             Create an account
           </h2>
         </div>
@@ -52,10 +52,10 @@ function SignupForm() {
             <button
               type="button"
               onClick={() => setRole('developer')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 role === 'developer'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200'
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'bg-background text-foreground/70 border border-border hover:text-foreground'
               }`}
             >
               I'm a Developer
@@ -63,24 +63,24 @@ function SignupForm() {
             <button
               type="button"
               onClick={() => setRole('client')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 role === 'client'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200'
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'bg-background text-foreground/70 border border-border hover:text-foreground'
               }`}
             >
               I'm a Client
             </button>
           </div>
 
-          <div className="flex justify-center space-x-4 border-b border-gray-200 dark:border-gray-800 pb-4">
+          <div className="flex justify-center space-x-4 border-b border-border pb-4">
             <button
               type="button"
               onClick={() => setMethod('password')}
-              className={`text-sm font-medium ${
+              className={`text-sm font-medium transition-colors ${
                 method === 'password'
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'text-accent'
+                  : 'text-foreground/50 hover:text-foreground'
               }`}
             >
               Sign up with password
@@ -88,10 +88,10 @@ function SignupForm() {
             <button
               type="button"
               onClick={() => setMethod('magic_link')}
-              className={`text-sm font-medium ${
+              className={`text-sm font-medium transition-colors ${
                 method === 'magic_link'
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'text-accent'
+                  : 'text-foreground/50 hover:text-foreground'
               }`}
             >
               Sign up with magic link
@@ -111,12 +111,12 @@ function SignupForm() {
                 type="email"
                 autoComplete="email"
                 required
-                className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+                className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
                 placeholder="Email address"
               />
             </div>
             {method === 'password' && (
-              <div>
+              <div className="pt-2">
                 <label htmlFor="password" className="sr-only">
                   Password
                 </label>
@@ -126,7 +126,7 @@ function SignupForm() {
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+                  className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
                   placeholder="Password"
                 />
               </div>
@@ -134,7 +134,7 @@ function SignupForm() {
           </div>
 
           {message && (
-            <div className="text-sm text-center text-blue-600 dark:text-blue-400">
+            <div className="text-sm text-center text-accent font-medium">
               {message}
             </div>
           )}
@@ -143,15 +143,15 @@ function SignupForm() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+              className="group relative flex w-full justify-center rounded-md bg-accent py-2.5 px-4 text-sm font-bold text-white hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background shadow-sm disabled:opacity-50"
             >
               {loading ? 'Processing...' : method === 'password' ? 'Sign up with Password' : 'Send Magic Link'}
             </button>
           </div>
         </form>
 
-        <div className="text-center text-sm">
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+        <div className="text-center text-sm pt-2">
+          <Link href="/login" className="font-medium text-accent hover:text-accent-hover transition-colors">
             Already have an account? Log in
           </Link>
         </div>

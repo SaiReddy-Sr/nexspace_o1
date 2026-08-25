@@ -45,7 +45,7 @@ export default function NewProjectForm() {
       
       <div className="space-y-6 rounded-md shadow-sm">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="title" className="block text-sm font-medium text-foreground">
             Project Title *
           </label>
           <input
@@ -53,13 +53,13 @@ export default function NewProjectForm() {
             name="title"
             type="text"
             required
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+            className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
             placeholder="Awesome Web App"
           />
         </div>
         
         <div>
-          <label htmlFor="live_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="live_url" className="block text-sm font-medium text-foreground">
             Live URL *
           </label>
           <input
@@ -67,41 +67,41 @@ export default function NewProjectForm() {
             name="live_url"
             type="url"
             required
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+            className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
             placeholder="https://awesome-app.com"
           />
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="description" className="block text-sm font-medium text-foreground">
             Description
           </label>
           <textarea
             id="description"
             name="description"
             rows={4}
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+            className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors resize-y"
             placeholder="What does it do? How was it built?"
           />
         </div>
 
         <div>
-          <label htmlFor="tech_tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="tech_tags" className="block text-sm font-medium text-foreground">
             Tech Tags (comma separated)
           </label>
           <input
             id="tech_tags"
             name="tech_tags"
             type="text"
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+            className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors font-mono"
             placeholder="React, Tailwind, Supabase"
           />
         </div>
 
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="pt-6 border-t border-border">
           <ProjectMediaUploader onUploadComplete={handleUploadComplete} />
           {mediaUrl && (
-            <p className="mt-2 text-sm text-green-600 dark:text-green-400">
+            <p className="mt-3 text-sm text-accent font-medium">
               Media uploaded successfully! Ready to submit.
             </p>
           )}
@@ -109,16 +109,16 @@ export default function NewProjectForm() {
       </div>
 
       {error && (
-        <div className="text-sm text-center text-red-600 dark:text-red-400">
+        <div className="text-sm text-center text-red-500 font-medium">
           {error}
         </div>
       )}
 
-      <div>
+      <div className="pt-2">
         <button
           type="submit"
           disabled={loading || isUploadingMedia}
-          className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+          className="group relative flex w-full justify-center rounded-md bg-accent py-2.5 px-4 text-sm font-bold text-white hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background shadow-sm disabled:opacity-50"
         >
           {loading ? 'Posting...' : 'Post Project'}
         </button>

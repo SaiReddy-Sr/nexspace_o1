@@ -179,13 +179,13 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
   }
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white dark:bg-gray-900 shadow-2xl border-l border-gray-200 dark:border-gray-800 flex flex-col transition-transform duration-300 ease-in-out">
+    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-card shadow-2xl border-l border-border flex flex-col transition-transform duration-300 ease-in-out">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 relative">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background relative">
         <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+          <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
           <div>
-            <h2 className="text-base font-bold text-gray-900 dark:text-white">
+            <h2 className="text-base font-mono font-bold text-foreground">
               {otherParticipant ? `@${otherParticipant.username}` : 'Chat'}
             </h2>
           </div>
@@ -197,7 +197,7 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none"
+                className="p-1 rounded-md text-foreground/50 hover:text-foreground hover:bg-background focus:outline-none transition-colors"
                 aria-label="Options"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -206,20 +206,20 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50 py-1 text-sm">
+                <div className="absolute right-0 mt-1 w-36 bg-card rounded-md shadow-lg border border-border z-50 py-1 text-sm font-mono font-bold">
                   <button
                     onClick={() => {
                       setMenuOpen(false)
                       setShowReportModal(true)
                     }}
-                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="w-full text-left px-4 py-2 text-foreground/80 hover:bg-background hover:text-foreground transition-colors"
                   >
                     Report
                   </button>
                   <button
                     onClick={handleBlock}
                     disabled={blocking}
-                    className="w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-background transition-colors"
                   >
                     {blocking ? 'Blocking...' : 'Block'}
                   </button>
@@ -231,7 +231,7 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
           {/* Close button */}
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+            className="p-1 rounded-md text-foreground/50 hover:text-foreground hover:bg-background focus:outline-none transition-colors"
             aria-label="Close chat"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,12 +243,12 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
 
       {/* Report Modal / Panel Overlay */}
       {showReportModal && (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800/90 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-2">
+        <div className="p-4 bg-background/95 border-b border-border backdrop-blur-sm">
+          <h3 className="text-sm font-mono font-bold text-foreground mb-2">
             Report @{otherParticipant?.username}
           </h3>
           {reportSuccess ? (
-            <div className="text-xs text-green-600 dark:text-green-400 font-medium py-2">
+            <div className="text-xs text-green-500 font-mono font-bold py-2">
               Report submitted. Thank you.
             </div>
           ) : (
@@ -258,20 +258,20 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
                 onChange={(e) => setReportReason(e.target.value)}
                 placeholder="Reason for report (optional)"
                 rows={2}
-                className="w-full text-xs p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full text-xs font-mono p-2 rounded border border-border bg-card text-foreground focus:outline-none focus:ring-1 focus:ring-accent resize-none transition-colors"
               />
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setShowReportModal(false)}
-                  className="px-2.5 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900"
+                  className="px-2.5 py-1 text-xs font-mono font-bold text-foreground/50 hover:text-foreground transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={reportSubmitting}
-                  className="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded font-medium disabled:opacity-50"
+                  className="px-3 py-1 text-xs font-mono font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded disabled:opacity-50 transition-colors"
                 >
                   {reportSubmitting ? 'Submitting...' : 'Submit Report'}
                 </button>
@@ -284,19 +284,19 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
       {/* Message List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {loading ? (
-          <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-            <svg className="animate-spin h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24">
+          <div className="flex items-center justify-center h-full text-foreground/50 text-sm font-mono font-bold">
+            <svg className="animate-spin h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             Loading messages...
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-2">
-            <svg className="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          <div className="flex flex-col items-center justify-center h-full text-center text-foreground/50 space-y-2 font-mono">
+            <svg className="w-12 h-12 text-border" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03-8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            <p className="text-sm font-medium">No messages yet.</p>
+            <p className="text-sm font-bold">No messages yet.</p>
             <p className="text-xs text-gray-400">Send a message to start the conversation!</p>
           </div>
         ) : (
@@ -310,13 +310,13 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
                 <div
                   className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
                     isMe
-                      ? 'bg-blue-600 text-white rounded-br-none'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-none border border-gray-200 dark:border-gray-700'
+                      ? 'bg-accent text-white rounded-br-none'
+                      : 'bg-background text-foreground rounded-bl-none border border-border'
                   }`}
                 >
                   {msg.content}
                 </div>
-                <span className="text-[10px] text-gray-400 mt-1 px-1">
+                <span className="text-[10px] font-mono font-bold text-foreground/40 mt-1 px-1">
                   {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
@@ -328,25 +328,25 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
 
       {/* Error Banner */}
       {error && (
-        <div className="px-4 py-2 bg-red-50 dark:bg-red-950/50 border-t border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs">
+        <div className="px-4 py-2 bg-red-500/10 border-t border-red-500/20 text-red-500 text-xs font-mono font-bold">
           {error}
         </div>
       )}
 
       {/* Input Form */}
-      <form onSubmit={handleSend} className="p-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center space-x-2">
+      <form onSubmit={handleSend} className="p-3 border-t border-border bg-background flex items-center space-x-2">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
           disabled={sending}
-          className="flex-1 px-4 py-2 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-full border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-gray-950 focus:outline-none transition-colors disabled:opacity-50"
+          className="flex-1 px-4 py-2 text-sm font-mono bg-card text-foreground rounded-full border border-transparent focus:border-accent focus:outline-none transition-colors disabled:opacity-50 placeholder-foreground/40"
         />
         <button
           type="submit"
           disabled={sending || !newMessage.trim()}
-          className="p-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full transition-colors focus:outline-none shadow-sm"
+          className="p-2 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full transition-colors focus:outline-none shadow-sm"
           aria-label="Send message"
         >
           <svg className="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">

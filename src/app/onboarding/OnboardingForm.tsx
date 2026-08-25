@@ -28,7 +28,7 @@ export default function OnboardingForm({ role, nextParam }: { role: string; next
       
       <div className="space-y-4 rounded-md shadow-sm">
         <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="username" className="block text-sm font-medium text-foreground">
             Username *
           </label>
           <input
@@ -38,34 +38,34 @@ export default function OnboardingForm({ role, nextParam }: { role: string; next
             required
             pattern="[a-zA-Z0-9_-]+"
             title="Only letters, numbers, underscores, and dashes are allowed."
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+            className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
             placeholder="johndoe"
           />
         </div>
         
         <div>
-          <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="full_name" className="block text-sm font-medium text-foreground">
             Full Name
           </label>
           <input
             id="full_name"
             name="full_name"
             type="text"
-            className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+            className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
             placeholder="John Doe"
           />
         </div>
 
         {role === 'developer' && (
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="bio" className="block text-sm font-medium text-foreground">
               Bio
             </label>
             <textarea
               id="bio"
               name="bio"
               rows={3}
-              className="mt-1 block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+              className="mt-2 block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors resize-y"
               placeholder="Full-stack developer building..."
             />
           </div>
@@ -73,16 +73,16 @@ export default function OnboardingForm({ role, nextParam }: { role: string; next
       </div>
 
       {error && (
-        <div className="text-sm text-center text-red-600 dark:text-red-400">
+        <div className="text-sm text-center text-red-500 font-medium">
           {error}
         </div>
       )}
 
-      <div>
+      <div className="pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+          className="group relative flex w-full justify-center rounded-md bg-accent py-2.5 px-4 text-sm font-bold text-white hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background shadow-sm disabled:opacity-50"
         >
           {loading ? 'Saving...' : 'Complete Profile'}
         </button>

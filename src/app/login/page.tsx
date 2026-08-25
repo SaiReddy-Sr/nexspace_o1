@@ -35,10 +35,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-xl border border-border shadow-sm">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h2 className="text-center text-3xl font-bold tracking-tight text-foreground">
             Log in to your account
           </h2>
         </div>
@@ -55,12 +55,12 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+                className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
                 placeholder="Email address"
               />
             </div>
             {method === 'password' && (
-              <div>
+              <div className="pt-2">
                 <label htmlFor="password" className="sr-only">
                   Password
                 </label>
@@ -70,7 +70,7 @@ export default function LoginPage() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm bg-transparent"
+                  className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
                   placeholder="Password"
                 />
               </div>
@@ -78,12 +78,12 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="text-sm text-center text-red-600 dark:text-red-400">
+            <div className="text-sm text-center text-red-500 font-medium">
               {error}
             </div>
           )}
           {message && (
-            <div className="text-sm text-center text-blue-600 dark:text-blue-400">
+            <div className="text-sm text-center text-accent font-medium">
               {message}
             </div>
           )}
@@ -92,23 +92,23 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+              className="group relative flex w-full justify-center rounded-md bg-accent py-2.5 px-4 text-sm font-bold text-white hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background shadow-sm disabled:opacity-50"
             >
               {loading ? 'Processing...' : method === 'password' ? 'Log in' : 'Send Magic Link'}
             </button>
           </div>
         </form>
 
-        <div className="text-center text-sm space-y-4 flex flex-col">
+        <div className="text-center text-sm space-y-4 flex flex-col pt-2">
           <button
             type="button"
             onClick={() => setMethod(method === 'password' ? 'magic_link' : 'password')}
-            className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            className="font-medium text-foreground/50 hover:text-foreground transition-colors"
           >
             {method === 'password' ? 'Log in with a magic link instead' : 'Log in with password instead'}
           </button>
 
-          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+          <Link href="/signup" className="font-medium text-accent hover:text-accent-hover transition-colors">
             Don't have an account? Sign up
           </Link>
         </div>
