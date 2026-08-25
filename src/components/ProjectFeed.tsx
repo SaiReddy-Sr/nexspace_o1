@@ -50,6 +50,7 @@ export default function ProjectFeed({ initialProjects }: ProjectFeedProps) {
           avatar_url
         )
       `)
+      .order('featured', { ascending: false })
       .order('created_at', { ascending: false })
       .range(from, to)
 

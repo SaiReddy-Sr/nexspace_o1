@@ -17,7 +17,7 @@ interface Project {
   profiles: Profile
 }
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({ project, isOwner }: { project: Project, isOwner?: boolean }) {
   // Truncate description to 100 characters
   const truncatedDescription = project.description
     ? project.description.length > 100
@@ -31,6 +31,17 @@ export default function ProjectCard({ project }: { project: Project }) {
       <Link href={`/project/${project.id}`} className="absolute inset-0 z-0">
         <span className="sr-only">View project {project.title}</span>
       </Link>
+
+      {isOwner && (
+        <div className="absolute top-2 right-2 z-10">
+          <Link
+            href={`/dashboard/edit-project/${project.id}`}
+            className="inline-flex items-center px-3 py-1 rounded-md bg-white/90 dark:bg-gray-800/90 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-700 backdrop-blur-sm transition-colors"
+          >
+            Edit
+          </Link>
+        </div>
+      )}
 
       {/* Media section */}
       <div className="w-full aspect-video bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">

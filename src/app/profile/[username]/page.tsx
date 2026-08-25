@@ -1,11 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import ProjectCard from '@/components/ProjectCard'
 
 export default async function ProfilePage(props: { params: Promise<{ username: string }> }) {
   const params = await props.params;
   const username = params.username
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data: profile, error } = await supabase
     .from('profiles')
@@ -23,6 +25,8 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
     .eq('developer_id', profile.id)
     .order('created_at', { ascending: false })
     .limit(50)
+
+  const isOwner = user?.id === profile.id;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -79,11 +83,12 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Will be implemented in later phases */}
             {projects.map((project: any) => (
-              <div key={project.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-                <h3 className="text-xl font-bold">{project.title}</h3>
-              </div>
+              <ProjectCard 
+                key={project.id} 
+                project={{...project, profiles: { username: profile.username, avatar_url: profile.avatar_url }}} 
+                isOwner={isOwner} 
+              />
             ))}
           </div>
         )}
