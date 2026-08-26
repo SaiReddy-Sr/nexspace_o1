@@ -13,7 +13,7 @@ export default async function Home() {
         avatar_url
       )
     `)
-    .order('featured', { ascending: false })
+    .order('featured_position', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
     .range(0, 9)
 

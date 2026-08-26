@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import ProjectCard from './ProjectCard'
+import QuickViewDrawer from './QuickViewDrawer'
 
 interface Profile {
   username: string
@@ -19,6 +20,8 @@ interface Project {
   media_type: 'image' | 'video'
   created_at: string
   profiles: Profile // the joined profile object
+  featured?: boolean
+  featured_position?: number | null
 }
 
 interface ProjectFeedProps {
@@ -30,6 +33,12 @@ export default function ProjectFeed({ initialProjects }: ProjectFeedProps) {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(initialProjects.length === 10)
+  
+  // Filtering state
+  const [activeTag, setActiveTag] = useState<string | null>(null)
+  
+  // Quick View state
+  const [quickViewProject, setQuickViewProject] = useState<Project | null>(null)
   
   const observerTarget = useRef<HTMLDivElement>(null)
   const supabase = createClient()
@@ -50,7 +59,7 @@ export default function ProjectFeed({ initialProjects }: ProjectFeedProps) {
           avatar_url
         )
       `)
-      .order('featured', { ascending: false })
+      .order('featured_position', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -99,6 +108,32 @@ export default function ProjectFeed({ initialProjects }: ProjectFeedProps) {
     }
   }, [loadMore, hasMore, loading])
 
+  // Filter bar logic: compute counts based on currently loaded projects
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    projects.forEach(p => {
+      if (p.tech_tags) {
+        p.tech_tags.forEach(tag => {
+          counts[tag] = (counts[tag] || 0) + 1
+        })
+      }
+    })
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])
+  }, [projects])
+
+  const visibleProjects = useMemo(() => {
+    if (!activeTag) return projects
+    return projects.filter(p => p.tech_tags?.includes(activeTag))
+  }, [projects, activeTag])
+
+  // Bento Hero logic
+  // Only the project with featured_position === 0 gets the hero treatment
+  const heroProject = visibleProjects.length > 0 && visibleProjects[0].featured_position === 0 
+    ? visibleProjects[0] 
+    : null
+    
+  const gridProjects = heroProject ? visibleProjects.slice(1) : visibleProjects
+
   if (projects.length === 0 && !loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -109,11 +144,59 @@ export default function ProjectFeed({ initialProjects }: ProjectFeedProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
+      {/* Sticky filter bar */}
+      <div className="sticky top-16 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-4 mb-8 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="flex overflow-x-auto pb-2 scrollbar-hide gap-2 items-center">
+          <button
+            onClick={() => setActiveTag(null)}
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              !activeTag 
+                ? 'bg-foreground text-background' 
+                : 'bg-accent/5 text-foreground/70 hover:bg-accent/10 hover:text-foreground'
+            }`}
+          >
+            All
+          </button>
+          {tagCounts.map(([tag, count]) => (
+            <button
+              key={tag}
+              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                activeTag === tag
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-background text-foreground/70 border-border hover:border-accent/50 hover:text-foreground'
+              }`}
+            >
+              {tag} <span className="opacity-60 ml-1 text-xs">({count})</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+        {heroProject && (
+          <ProjectCard 
+            key={heroProject.id} 
+            project={heroProject} 
+            isHero={true} 
+            onQuickView={setQuickViewProject} 
+          />
+        )}
+        
+        {gridProjects.map((project) => (
+          <ProjectCard 
+            key={project.id} 
+            project={project} 
+            onQuickView={setQuickViewProject} 
+          />
         ))}
+        
+        {visibleProjects.length === 0 && (
+          <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 text-slate-500">
+            No projects match the selected tag.
+          </div>
+        )}
       </div>
 
       <div ref={observerTarget} className="mt-8 flex justify-center py-4">
@@ -132,6 +215,11 @@ export default function ProjectFeed({ initialProjects }: ProjectFeedProps) {
           </div>
         )}
       </div>
+      
+      <QuickViewDrawer 
+        project={quickViewProject} 
+        onClose={() => setQuickViewProject(null)} 
+      />
     </div>
   )
 }

@@ -17,7 +17,8 @@ create table public.profiles (
   bio text,
   website_url text,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  is_admin boolean not null default false
 );
 
 create index idx_profiles_role on public.profiles(role);
@@ -50,6 +51,8 @@ create table public.projects (
   live_url text,
   media_url text,               -- WebP screenshot / short clip in Supabase Storage
   media_type text default 'image' check (media_type in ('image', 'video')),
+  featured boolean not null default false,
+  featured_position integer,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -57,6 +60,7 @@ create table public.projects (
 create index idx_projects_developer on public.projects(developer_id);
 create index idx_projects_created_at on public.projects(created_at desc);
 create index idx_projects_tech_tags on public.projects using gin(tech_tags);
+create unique index idx_projects_featured_position on public.projects(featured_position) where featured_position is not null;
 
 alter table public.projects enable row level security;
 
@@ -82,6 +86,36 @@ create policy "Developers can update own projects"
 create policy "Developers can delete own projects"
   on public.projects for delete
   using (auth.uid() = developer_id);
+
+create policy "Admins can update any project"
+  on public.projects for update
+  using (
+    exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+  )
+  with check (
+    exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+  );
+
+create or replace function public.enforce_featured_admin_only()
+returns trigger as $$
+begin
+  if (new.featured is distinct from old.featured
+      or new.featured_position is distinct from old.featured_position)
+  then
+    if not exists (
+      select 1 from public.profiles
+      where id = auth.uid() and is_admin = true
+    ) then
+      raise exception 'Only admins may modify featured status or position';
+    end if;
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger trg_enforce_featured_admin_only
+  before update on public.projects
+  for each row execute function public.enforce_featured_admin_only();
 
 
 -- ---------------------------------------------------------

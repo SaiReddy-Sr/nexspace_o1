@@ -9,18 +9,15 @@ export default function InterestButton({ problemId, hasExpressedInterest }: { pr
   const [isInterested, setIsInterested] = useState(hasExpressedInterest)
 
   async function handleInterest() {
-    setLoading(true)
+    setIsInterested(true) // Optimistic update
     setError('')
     
     const result = await expressInterest(problemId)
     
     if (result.error) {
       setError(result.error)
-    } else if (result.success) {
-      setIsInterested(true)
+      setIsInterested(false) // Revert on error
     }
-    
-    setLoading(false)
   }
 
   return (
