@@ -4,6 +4,13 @@ import ProjectFeed from '@/components/ProjectFeed'
 export default async function Home() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  let role = null
+  if (user) {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    if (profile) role = profile.role
+  }
+
   const { data: initialProjects, error } = await supabase
     .from('projects')
     .select(`
@@ -22,8 +29,8 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-background font-sans">
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="flex flex-col min-h-full bg-background font-sans">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
         
         {/* Header Section */}
         <div className="mb-12 text-center sm:text-left">
@@ -36,7 +43,7 @@ export default async function Home() {
         </div>
 
         {/* Feed Section */}
-        <ProjectFeed initialProjects={initialProjects || []} />
+        <ProjectFeed initialProjects={initialProjects || []} user={user} role={role} />
       </main>
     </div>
   )
