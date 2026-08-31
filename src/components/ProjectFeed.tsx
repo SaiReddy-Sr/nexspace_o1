@@ -137,13 +137,6 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
     return filtered
   }, [projects, activeTag, searchQuery])
 
-  // Bento Hero logic
-  const heroProject = visibleProjects.length > 0 && visibleProjects[0].featured_position === 0 
-    ? visibleProjects[0] 
-    : null
-    
-  const gridProjects = heroProject ? visibleProjects.slice(1) : visibleProjects
-
   // Featured for Right Sidebar
   const featuredProjects = useMemo(() => {
     return projects.filter(p => p.featured_position !== null).sort((a, b) => a.featured_position! - b.featured_position!)
@@ -154,14 +147,14 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
       {/* Left Column: Feed */}
       <div className="flex-1 min-w-0">
         {/* Sticky filter bar */}
-        <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-4 mb-8 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-4 mb-8 bg-background/90 backdrop-blur-md border-b border-white/5">
           <div className="flex overflow-x-auto pb-2 scrollbar-hide gap-2 items-center">
             <button
               onClick={() => setActiveTag(null)}
-              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 !activeTag 
-                  ? 'bg-foreground text-background' 
-                  : 'bg-accent/5 text-foreground/70 hover:bg-accent/10 hover:text-foreground'
+                  ? 'bg-white text-black' 
+                  : 'bg-white/5 text-foreground/70 hover:bg-white/10 hover:text-white'
               }`}
             >
               All
@@ -170,13 +163,13 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
               <button
                 key={tag}
                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                   activeTag === tag
-                    ? 'bg-accent text-white border-accent'
-                    : 'bg-background text-foreground/70 border-border hover:border-accent/50 hover:text-foreground'
+                    ? 'bg-white text-black'
+                    : 'bg-white/5 text-foreground/70 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                {tag} <span className="opacity-60 ml-1 text-xs">({count})</span>
+                {tag} <span className="opacity-40 ml-1 text-xs">({count})</span>
               </button>
             ))}
           </div>
@@ -184,22 +177,13 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
 
         {projects.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">No projects yet</h3>
-            <p className="text-gray-500 dark:text-gray-400">Check back soon for new creations.</p>
+            <h3 className="text-xl font-medium text-white mb-2">No projects yet</h3>
+            <p className="text-foreground/50">Check back soon for new creations.</p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {heroProject && (
-                <ProjectCard 
-                  key={heroProject.id} 
-                  project={heroProject} 
-                  isHero={true} 
-                  onQuickView={setQuickViewProject} 
-                />
-              )}
-              
-              {gridProjects.map((project) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
+              {visibleProjects.map((project) => (
                 <ProjectCard 
                   key={project.id} 
                   project={project} 
@@ -208,16 +192,16 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
               ))}
               
               {visibleProjects.length === 0 && (
-                <div className="col-span-1 sm:col-span-2 xl:col-span-3 text-center py-12 text-slate-500">
+                <div className="col-span-1 sm:col-span-2 xl:col-span-3 text-center py-12 text-foreground/50">
                   No projects match your filter.
                 </div>
               )}
             </div>
 
-            <div ref={observerTarget} className="mt-8 flex justify-center py-4">
+            <div ref={observerTarget} className="mt-12 flex justify-center py-4">
               {loading && (
-                <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
-                  <svg className="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <div className="text-sm text-foreground/50 flex items-center space-x-2">
+                  <svg className="animate-spin h-4 w-4 text-foreground/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -225,7 +209,7 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
                 </div>
               )}
               {!hasMore && projects.length > 0 && (
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-foreground/50">
                   You've reached the end
                 </div>
               )}
@@ -238,60 +222,59 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
       <aside className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6 pt-4 lg:pt-0">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/50" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/50" />
           <input 
             id="home-search-input"
             type="text" 
-            placeholder="Search projects..." 
+            placeholder="Search nexspace..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-background border border-border rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+            className="w-full bg-[#151518] border border-white/5 rounded-2xl py-3 pl-12 pr-4 text-sm text-white placeholder-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
           />
         </div>
 
         {/* Dynamic CTA Card */}
-        <div className="bg-accent/10 border border-accent/20 rounded-2xl p-6 flex flex-col items-center text-center">
+        <div className="bg-[#151518] border border-white/5 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
           {!user ? (
             <>
-              <h3 className="text-lg font-bold text-foreground mb-2">Join nexspace</h3>
-              <p className="text-sm text-foreground/70 mb-4">Showcase your work to the community.</p>
-              <Link href="/signup" className="w-full py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-hover transition-colors shadow-sm">Sign up</Link>
+              <h3 className="text-lg font-bold text-white mb-2">Join nexspace</h3>
+              <p className="text-sm text-foreground/60 mb-5">Showcase your work to the community.</p>
+              <Link href="/signup" className="w-full py-2.5 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-colors shadow-sm">Sign up</Link>
             </>
           ) : role === 'developer' ? (
             <>
-              <h3 className="text-lg font-bold text-foreground mb-2">Post your next project</h3>
-              <p className="text-sm text-foreground/70 mb-4">Share what you've been working on.</p>
-              <Link href="/dashboard/new-project" className="w-full py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-hover transition-colors shadow-sm">New Project</Link>
+              <h3 className="text-lg font-bold text-white mb-2">Post your next project</h3>
+              <p className="text-sm text-foreground/60 mb-5">Share what you've been working on.</p>
+              <Link href="/dashboard/new-project" className="w-full py-2.5 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-colors shadow-sm">New Project</Link>
             </>
           ) : (
             <>
-              <h3 className="text-lg font-bold text-foreground mb-2">Need something built?</h3>
-              <p className="text-sm text-foreground/70 mb-4">Post a request and find a developer.</p>
-              <Link href="/requests/new" className="w-full py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-hover transition-colors shadow-sm">Post a Request</Link>
+              <h3 className="text-lg font-bold text-white mb-2">Need something built?</h3>
+              <p className="text-sm text-foreground/60 mb-5">Post a request and find a developer.</p>
+              <Link href="/requests/new" className="w-full py-2.5 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-colors shadow-sm">Post a Request</Link>
             </>
           )}
         </div>
 
         {/* Top Ranked Widget */}
-        <div className="bg-background border border-border rounded-2xl p-6 flex flex-col">
-          <h3 className="font-bold text-foreground mb-4">Top Ranked</h3>
+        <div className="bg-[#151518] border border-white/5 rounded-2xl p-6 flex flex-col shadow-sm">
+          <h3 className="font-bold text-white mb-4">Top Ranked</h3>
           {featuredProjects.length === 0 ? (
             <p className="text-sm text-foreground/50">No featured projects yet</p>
           ) : (
             <div className="flex flex-col gap-4">
               {featuredProjects.slice(0, 5).map((fp, i) => (
                 <Link href={`/project/${fp.id}`} key={fp.id} className="flex items-center gap-3 group">
-                  <span className="text-xs font-black text-foreground/30 w-4 group-hover:text-accent transition-colors">{i + 1}</span>
-                  <div className="w-8 h-8 rounded-md bg-accent/20 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-white/5">
                     {fp.profiles?.avatar_url ? (
                       <img src={fp.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-xs font-bold text-accent">{fp.title.charAt(0).toUpperCase()}</span>
+                      <span className="text-sm font-bold text-white">{fp.title.charAt(0).toUpperCase()}</span>
                     )}
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-semibold text-foreground truncate group-hover:text-accent transition-colors">{fp.title}</span>
-                    <span className="text-xs text-foreground/60 truncate">@{fp.profiles?.username}</span>
+                    <span className="text-sm font-bold text-white truncate group-hover:text-accent transition-colors">{fp.title}</span>
+                    <span className="text-xs text-foreground/50 truncate">@{fp.profiles?.username}</span>
                   </div>
                 </Link>
               ))}
