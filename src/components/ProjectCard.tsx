@@ -32,7 +32,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
   }
 
   return (
-    <div className="group relative flex flex-col">
+    <div className="group relative flex flex-col min-w-0">
       {/* Image Container */}
       <div
         ref={cardRef}
@@ -119,10 +119,10 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
               </span>
             </div>
           )}
-          <span className="font-bold text-sm text-foreground truncate max-w-[100px] group-hover/profile:text-accent transition-colors">
+          <span className="font-bold text-sm text-foreground truncate min-w-0 group-hover/profile:text-accent transition-colors">
             {project.profiles.username}
           </span>
-          <span className="text-sm text-foreground/50 truncate max-w-[120px] sm:max-w-[180px]">
+          <span className="text-sm text-foreground/50 truncate min-w-0 flex-shrink">
             {project.title}
           </span>
         </Link>
