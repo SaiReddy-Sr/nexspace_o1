@@ -39,7 +39,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setOpacity(1)}
         onMouseLeave={() => setOpacity(0)}
-        className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#151518] border border-white/5 shadow-sm group-hover:shadow-lg transition-all duration-300"
+        className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-card border border-border shadow-lg shadow-black/40 group-hover:shadow-2xl group-hover:shadow-accent/20 group-hover:border-accent/50 group-hover:-translate-y-1 transition-all duration-300"
       >
         <div
           className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
@@ -92,8 +92,11 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
               />
             )
           ) : (
-            <span className="text-gray-600 text-sm">No media</span>
+            <span className="text-foreground/50 text-sm font-medium">No media</span>
           )}
+          
+          {/* Subtle gradient overlay at bottom for contrast / framing */}
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
         </div>
       </div>
 
