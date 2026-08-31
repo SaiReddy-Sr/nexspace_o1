@@ -153,8 +153,8 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
               onClick={() => setActiveTag(null)}
               className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 !activeTag 
-                  ? 'bg-white text-black' 
-                  : 'bg-white/5 text-foreground/70 hover:bg-white/10 hover:text-white'
+                  ? 'bg-foreground text-background' 
+                  : 'bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
               }`}
             >
               All
@@ -165,8 +165,8 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
                 className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                   activeTag === tag
-                    ? 'bg-white text-black'
-                    : 'bg-white/5 text-foreground/70 hover:bg-white/10 hover:text-white'
+                    ? 'bg-foreground text-background'
+                    : 'bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
                 }`}
               >
                 {tag} <span className="opacity-40 ml-1 text-xs">({count})</span>
@@ -229,51 +229,51 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
             placeholder="Search nexspace..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#151518] border border-white/5 rounded-2xl py-3 pl-12 pr-4 text-sm text-white placeholder-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
+            className="w-full bg-card border border-border rounded-2xl py-3 pl-12 pr-4 text-sm text-foreground placeholder-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
           />
         </div>
 
         {/* Dynamic CTA Card */}
-        <div className="bg-[#151518] border border-white/5 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
           {!user ? (
             <>
-              <h3 className="text-lg font-bold text-white mb-2">Join nexspace</h3>
-              <p className="text-sm text-foreground/60 mb-5">Showcase your work to the community.</p>
-              <Link href="/signup" className="w-full py-2.5 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-colors shadow-sm">Sign up</Link>
+              <h3 className="text-lg font-bold text-foreground mb-2">Join nexspace</h3>
+              <p className="text-sm text-foreground/70 mb-5">Showcase your work to the community.</p>
+              <Link href="/signup" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Sign up</Link>
             </>
           ) : role === 'developer' ? (
             <>
-              <h3 className="text-lg font-bold text-white mb-2">Post your next project</h3>
-              <p className="text-sm text-foreground/60 mb-5">Share what you've been working on.</p>
-              <Link href="/dashboard/new-project" className="w-full py-2.5 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-colors shadow-sm">New Project</Link>
+              <h3 className="text-lg font-bold text-foreground mb-2">Post your next project</h3>
+              <p className="text-sm text-foreground/70 mb-5">Share what you've been working on.</p>
+              <Link href="/dashboard/new-project" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">New Project</Link>
             </>
           ) : (
             <>
-              <h3 className="text-lg font-bold text-white mb-2">Need something built?</h3>
-              <p className="text-sm text-foreground/60 mb-5">Post a request and find a developer.</p>
-              <Link href="/requests/new" className="w-full py-2.5 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-colors shadow-sm">Post a Request</Link>
+              <h3 className="text-lg font-bold text-foreground mb-2">Need something built?</h3>
+              <p className="text-sm text-foreground/70 mb-5">Post a request and find a developer.</p>
+              <Link href="/requests/new" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Post a Request</Link>
             </>
           )}
         </div>
 
         {/* Top Ranked Widget */}
-        <div className="bg-[#151518] border border-white/5 rounded-2xl p-6 flex flex-col shadow-sm">
-          <h3 className="font-bold text-white mb-4">Top Ranked</h3>
+        <div className="bg-card border border-border rounded-2xl p-6 flex flex-col shadow-sm">
+          <h3 className="text-lg font-bold text-foreground mb-4">Top Ranked</h3>
           {featuredProjects.length === 0 ? (
             <p className="text-sm text-foreground/50">No featured projects yet</p>
           ) : (
             <div className="flex flex-col gap-4">
               {featuredProjects.slice(0, 5).map((fp, i) => (
                 <Link href={`/project/${fp.id}`} key={fp.id} className="flex items-center gap-3 group">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-white/5">
+                  <div className="w-10 h-10 rounded-xl bg-foreground/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-border">
                     {fp.profiles?.avatar_url ? (
                       <img src={fp.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-sm font-bold text-white">{fp.title.charAt(0).toUpperCase()}</span>
+                      <span className="text-sm font-bold text-foreground">{fp.title.charAt(0).toUpperCase()}</span>
                     )}
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-bold text-white truncate group-hover:text-accent transition-colors">{fp.title}</span>
+                    <span className="text-sm font-bold text-foreground truncate group-hover:text-accent transition-colors">{fp.title}</span>
                     <span className="text-xs text-foreground/50 truncate">@{fp.profiles?.username}</span>
                   </div>
                 </Link>

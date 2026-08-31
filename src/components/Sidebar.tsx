@@ -28,7 +28,7 @@ export default async function Sidebar() {
       {/* Top section: Logo (desktop only) */}
       <Link href="/" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-accent text-white font-black hover:bg-accent-hover transition-colors shadow-sm group relative">
         N
-        <div className="absolute left-full ml-4 px-2 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
+        <div className="absolute left-full ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
           nexspace
         </div>
       </Link>
@@ -37,9 +37,9 @@ export default async function Sidebar() {
       <div className="flex sm:flex-col justify-around sm:justify-start items-center w-full sm:w-auto gap-1 sm:gap-3 flex-1">
         
         {/* Home */}
-        <Link href="/" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-white/10 text-foreground/70 hover:text-white transition-colors">
+        <Link href="/" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
           <Home className="w-[22px] h-[22px]" strokeWidth={2.5} />
-          <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
+          <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
             Home
           </div>
         </Link>
@@ -48,26 +48,26 @@ export default async function Sidebar() {
         <ClientSearchIcon />
 
         {/* Requests */}
-        <Link href="/requests" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-white/10 text-foreground/70 hover:text-white transition-colors">
+        <Link href="/requests" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
           <Briefcase className="w-[22px] h-[22px]" strokeWidth={2.5} />
-          <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
+          <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
             Requests
           </div>
         </Link>
 
         {/* New Project (Developer) or Post Request (Client) */}
         {user && role === 'developer' && (
-          <Link href="/dashboard/new-project" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-white/10 text-foreground/70 hover:text-white transition-colors">
+          <Link href="/dashboard/new-project" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
             <PlusCircle className="w-[22px] h-[22px]" strokeWidth={2.5} />
-            <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
+            <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
               New Project
             </div>
           </Link>
         )}
         {user && role === 'client' && (
-          <Link href="/requests/new" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-white/10 text-foreground/70 hover:text-white transition-colors">
+          <Link href="/requests/new" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
             <PlusCircle className="w-[22px] h-[22px]" strokeWidth={2.5} />
-            <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
+            <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
               Post Request
             </div>
           </Link>
@@ -75,9 +75,9 @@ export default async function Sidebar() {
 
         {/* Messages */}
         {user && (
-          <Link href="/dashboard/messages" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-white/10 text-foreground/70 hover:text-white transition-colors">
+          <Link href="/dashboard/messages" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
             <MessageSquare className="w-[22px] h-[22px]" strokeWidth={2.5} />
-            <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
+            <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
               Messages
             </div>
           </Link>

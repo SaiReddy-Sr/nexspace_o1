@@ -39,7 +39,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setOpacity(1)}
         onMouseLeave={() => setOpacity(0)}
-        className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#151518] border border-white/5 shadow-sm group-hover:shadow-lg transition-all duration-300"
+        className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#151518] border border-white/5 shadow-sm group-hover:shadow-lg transition-all duration-300"
       >
         <div
           className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
@@ -64,7 +64,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
           <div className="absolute top-3 right-3 z-20">
             <Link
               href={`/dashboard/edit-project/${project.id}`}
-              className="inline-flex items-center px-3 py-1.5 rounded-full bg-black/60 text-xs font-medium text-white shadow-sm border border-white/10 hover:bg-white hover:text-black backdrop-blur-md transition-colors relative z-30"
+              className="inline-flex items-center px-3 py-1.5 rounded-full bg-background/60 text-xs font-medium text-foreground shadow-sm border border-border hover:bg-foreground hover:text-background backdrop-blur-md transition-colors relative z-30"
             >
               Edit
             </Link>
@@ -110,13 +110,13 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
               className="w-6 h-6 rounded-full bg-border object-cover flex-shrink-0"
             />
           ) : (
-            <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
               <span className="text-[10px] font-bold text-foreground/50">
                 {project.profiles.username.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
-          <span className="font-bold text-sm text-white truncate max-w-[100px] group-hover/profile:text-accent transition-colors">
+          <span className="font-bold text-sm text-foreground truncate max-w-[100px] group-hover/profile:text-accent transition-colors">
             {project.profiles.username}
           </span>
           <span className="text-sm text-foreground/50 truncate max-w-[120px] sm:max-w-[180px]">
