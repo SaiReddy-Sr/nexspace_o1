@@ -14,6 +14,7 @@ create table public.profiles (
   username text unique not null,
   full_name text,
   avatar_url text,
+  banner_url text,
   bio text,
   website_url text,
   created_at timestamptz not null default now(),

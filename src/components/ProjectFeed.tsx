@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import ProjectCard from './ProjectCard'
-import QuickViewDrawer from './QuickViewDrawer'
 import Link from 'next/link'
 import { useSearch } from '@/lib/SearchContext'
 import SpotlightCard from './SpotlightCard'
@@ -47,9 +46,7 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
   const [activeTag, setActiveTag] = useState<string | null>(null)
   const { searchQuery } = useSearch()
   
-  // Quick View state
-  const [quickViewProject, setQuickViewProject] = useState<Project | null>(null)
-  
+  // Filter logic
   const observerTarget = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
@@ -225,7 +222,6 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
                 <ProjectCard 
                   key={project.id} 
                   project={project} 
-                  onQuickView={setQuickViewProject}
                   hasVoted={userVotes.has(project.id)}
                   isLoggedIn={!!user}
                 />
@@ -303,10 +299,6 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
         </div>
       </aside>
 
-      <QuickViewDrawer 
-        project={quickViewProject} 
-        onClose={() => setQuickViewProject(null)} 
-      />
     </div>
   )
 }
