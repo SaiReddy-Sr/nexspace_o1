@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import MessageButton from './MessageButton'
 import QuickViewTrigger from '@/components/QuickViewTrigger'
+import UpvoteButton from '@/components/UpvoteButton'
 
 export default async function ProjectDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -29,6 +30,17 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
   const { data: { user } } = await supabase.auth.getUser()
   const isLoggedIn = !!user
   const isOwnProject = isLoggedIn && user.id === project.developer_id
+
+  let hasVoted = false
+  if (isLoggedIn) {
+    const { data: vote } = await supabase
+      .from('project_votes')
+      .select('id')
+      .eq('project_id', project.id)
+      .eq('voter_id', user.id)
+      .single()
+    if (vote) hasVoted = true
+  }
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-background font-sans pb-24">
@@ -64,7 +76,14 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
             {project.title}
           </h1>
           
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 items-center">
+            <UpvoteButton
+              projectId={project.id}
+              initialVoteCount={project.vote_count || 0}
+              initialHasVoted={hasVoted}
+              isLoggedIn={isLoggedIn}
+            />
+
             {project.live_url && (
               <QuickViewTrigger project={project} />
             )}

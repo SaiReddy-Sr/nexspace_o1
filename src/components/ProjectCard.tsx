@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import UpvoteButton from './UpvoteButton'
 
 interface Profile {
   username: string
@@ -19,9 +20,10 @@ interface Project {
   profiles: Profile
   featured?: boolean
   featured_position?: number | null
+  vote_count: number
 }
 
-export default function ProjectCard({ project, isOwner, onQuickView }: { project: Project, isOwner?: boolean, onQuickView?: (project: Project) => void }) {
+export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = false, isLoggedIn = false }: { project: Project, isOwner?: boolean, onQuickView?: (project: Project) => void, hasVoted?: boolean, isLoggedIn?: boolean }) {
   const isTopFeatured = project.featured_position === 1
 
   return (
@@ -89,7 +91,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
         </h3>
 
         {/* Attribution Row */}
-        <div className="flex items-center space-x-2 mt-1 mb-3 relative z-20 pointer-events-none group-hover:pointer-events-auto">
+        <div className="flex items-center justify-between mt-1 mb-3 relative z-20 pointer-events-none group-hover:pointer-events-auto pr-4">
           <Link href={`/profile/${project.profiles.username}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             {project.profiles.avatar_url ? (
               <img
@@ -108,6 +110,13 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
               {project.profiles.username}
             </span>
           </Link>
+
+          <UpvoteButton
+            projectId={project.id}
+            initialVoteCount={project.vote_count || 0}
+            initialHasVoted={hasVoted}
+            isLoggedIn={isLoggedIn}
+          />
         </div>
 
         {/* Description */}

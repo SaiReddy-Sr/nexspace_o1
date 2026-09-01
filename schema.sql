@@ -53,6 +53,7 @@ create table public.projects (
   media_type text default 'image' check (media_type in ('image', 'video')),
   featured boolean not null default false,
   featured_position integer,
+  vote_count integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -278,4 +279,57 @@ create policy "Users can create reports"
   on public.reports for insert
   with check (auth.uid() = reporter_id);
 
-grant insert on public.reports to authenticated;
+grant insert on public.reports to authenticated;
+
+
+-- ---------------------------------------------------------
+-- 8. PROJECT VOTES
+-- ---------------------------------------------------------
+create table public.project_votes (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references public.projects(id) on delete cascade,
+  voter_id uuid not null references public.profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  constraint unique_vote unique (project_id, voter_id)
+);
+
+create index idx_project_votes_project on public.project_votes(project_id);
+
+alter table public.project_votes enable row level security;
+
+create policy "Users can view their own vote"
+  on public.project_votes for select
+  using (auth.uid() = voter_id);
+
+create policy "Users can cast their own vote"
+  on public.project_votes for insert
+  with check (auth.uid() = voter_id);
+
+create policy "Users can remove their own vote"
+  on public.project_votes for delete
+  using (auth.uid() = voter_id);
+
+create or replace function public.sync_project_vote_count()
+returns trigger as $$
+begin
+  if TG_OP = 'INSERT' then
+    update public.projects set vote_count = vote_count + 1 where id = new.project_id;
+    return new;
+  elsif TG_OP = 'DELETE' then
+    update public.projects set vote_count = greatest(vote_count - 1, 0) where id = old.project_id;
+    return old;
+  end if;
+  return null;
+end;
+$$ language plpgsql security definer;
+
+create trigger trg_sync_vote_count_insert
+  after insert on public.project_votes
+  for each row execute function public.sync_project_vote_count();
+
+create trigger trg_sync_vote_count_delete
+  after delete on public.project_votes
+  for each row execute function public.sync_project_vote_count();
+
+grant select, insert, delete on public.project_votes to authenticated;
+revoke all privileges on public.project_votes from anon;
