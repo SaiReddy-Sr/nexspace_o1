@@ -43,19 +43,14 @@ export default async function Sidebar() {
           <span className="text-[10px] font-normal truncate w-full text-center px-1">Requests</span>
         </Link>
 
-        {/* New Project (Developer) or Post Request (Client) */}
-        {user && role === 'developer' && (
-          <Link href="/dashboard/new-project" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
-            <PlusCircle className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
-            <span className="text-[10px] font-normal truncate w-full text-center px-1">New</span>
-          </Link>
-        )}
-        {user && role === 'client' && (
-          <Link href="/requests/new" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
-            <PlusCircle className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
-            <span className="text-[10px] font-normal truncate w-full text-center px-1">New</span>
-          </Link>
-        )}
+        {/* New Project / Post Request */}
+        <Link 
+          href={role === 'client' ? "/requests/new" : "/dashboard/new-project"} 
+          className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1"
+        >
+          <PlusCircle className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+          <span className="text-[10px] font-normal truncate w-full text-center px-1">New</span>
+        </Link>
 
         {/* Messages */}
         {user && (

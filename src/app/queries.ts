@@ -14,7 +14,7 @@ export async function getTopRankedProjects() {
       )
     `)
     .order('vote_count', { ascending: false })
-    .limit(5)
+    .limit(10)
 
   if (error) {
     console.error('Error fetching top ranked projects:', error)
