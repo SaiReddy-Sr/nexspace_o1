@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import UpvoteButton from './UpvoteButton'
 import { useRef, useState } from 'react'
 
 interface Profile {
@@ -17,10 +18,13 @@ interface Project {
   media_url: string | null
   media_type: 'image' | 'video'
   created_at: string
+  featured?: boolean
+  featured_position?: number | null
+  vote_count: number
   profiles: Profile
 }
 
-export default function ProjectCard({ project, isOwner, onQuickView }: { project: Project, isOwner?: boolean, onQuickView?: (project: Project) => void }) {
+export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = false, isLoggedIn = false }: { project: Project, isOwner?: boolean, onQuickView?: (project: Project) => void, hasVoted?: boolean, isLoggedIn?: boolean }) {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [opacity, setOpacity] = useState(0)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -97,7 +101,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
         </div>
       </div>
 
-      {/* Attribution Row */}
+      {/* Attribution and Vote Row */}
       <div className="mt-3 flex items-center justify-between px-1">
         <Link
           href={`/profile/${project.profiles.username}`}
@@ -123,6 +127,13 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
             {project.title}
           </span>
         </Link>
+
+        <UpvoteButton
+          projectId={project.id}
+          initialVoteCount={project.vote_count || 0}
+          initialHasVoted={hasVoted}
+          isLoggedIn={isLoggedIn}
+        />
       </div>
     </div>
   )

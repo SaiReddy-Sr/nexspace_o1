@@ -6,9 +6,20 @@ export default async function Home() {
 
   const { data: { user } } = await supabase.auth.getUser()
   let role = null
+  let initialUserVotes: string[] = []
+  
   if (user) {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
     if (profile) role = profile.role
+
+    const { data: votes } = await supabase
+      .from('project_votes')
+      .select('project_id')
+      .eq('voter_id', user.id)
+    
+    if (votes) {
+      initialUserVotes = votes.map(v => v.project_id)
+    }
   }
 
   const { data: initialProjects, error } = await supabase
@@ -43,7 +54,7 @@ export default async function Home() {
         </div>
 
         {/* Feed Section */}
-        <ProjectFeed initialProjects={initialProjects || []} user={user} role={role} />
+        <ProjectFeed initialProjects={initialProjects || []} user={user} role={role} initialUserVotes={initialUserVotes} />
       </main>
     </div>
   )

@@ -24,16 +24,19 @@ interface Project {
   profiles: Profile
   featured?: boolean
   featured_position?: number | null
+  vote_count: number
 }
 
 interface ProjectFeedProps {
   initialProjects: any[]
   user?: any
   role?: string | null
+  initialUserVotes?: string[]
 }
 
-export default function ProjectFeed({ initialProjects, user, role }: ProjectFeedProps) {
+export default function ProjectFeed({ initialProjects, user, role, initialUserVotes = [] }: ProjectFeedProps) {
   const [projects, setProjects] = useState<Project[]>(initialProjects as Project[])
+  const [userVotes, setUserVotes] = useState<Set<string>>(new Set(initialUserVotes))
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(initialProjects.length === 10)
@@ -75,6 +78,23 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
     }
 
     if (data && data.length > 0) {
+      if (user) {
+        const ids = data.map(p => p.id)
+        const { data: votes } = await supabase
+          .from('project_votes')
+          .select('project_id')
+          .in('project_id', ids)
+          .eq('voter_id', user.id)
+        
+        if (votes && votes.length > 0) {
+          setUserVotes(prev => {
+            const next = new Set(prev)
+            votes.forEach(v => next.add(v.project_id))
+            return next
+          })
+        }
+      }
+
       setProjects((prev) => {
         const existingIds = new Set(prev.map(p => p.id))
         const newProjects = data.filter(p => !existingIds.has(p.id)) as unknown as Project[]
@@ -187,7 +207,9 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
                 <ProjectCard 
                   key={project.id} 
                   project={project} 
-                  onQuickView={setQuickViewProject} 
+                  onQuickView={setQuickViewProject}
+                  hasVoted={userVotes.has(project.id)}
+                  isLoggedIn={!!user}
                 />
               ))}
               
