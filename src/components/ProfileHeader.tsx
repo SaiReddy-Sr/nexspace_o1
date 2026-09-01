@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import EditProfileModal from './EditProfileModal'
-import { Calendar, Link as LinkIcon } from 'lucide-react'
+import { Calendar, Link as LinkIcon, Share2, Check } from 'lucide-react'
 
 interface ProfileHeaderProps {
   profile: any
@@ -12,7 +12,32 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ profile, isOwner }: ProfileHeaderProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const router = useRouter()
+
+  const handleShare = async () => {
+    const url = window.location.href
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile.full_name || profile.username}'s Profile on NexSpace`,
+          url: url
+        })
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          copyToClipboard(url)
+        }
+      }
+    } else {
+      copyToClipboard(url)
+    }
+  }
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const handleSave = () => {
     // Refresh the current route to fetch updated data
@@ -55,7 +80,14 @@ export default function ProfileHeader({ profile, isOwner }: ProfileHeaderProps) 
             </div>
             
             {/* Action buttons (Mobile only: positioned under avatar) */}
-            <div className="w-full flex justify-center sm:hidden mt-3">
+            <div className="w-full flex justify-center sm:hidden mt-3 gap-2">
+              <button 
+                onClick={handleShare}
+                className="px-5 py-2 rounded-full border border-white/20 bg-[#1E1E2E] hover:bg-white/10 text-sm font-bold text-white transition-colors shadow-sm flex items-center gap-2"
+              >
+                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Share2 className="w-4 h-4" />}
+                {copied ? 'Copied' : 'Public URL'}
+              </button>
               {isOwner && (
                 <button 
                   onClick={() => setIsEditModalOpen(true)}
@@ -68,7 +100,14 @@ export default function ProfileHeader({ profile, isOwner }: ProfileHeaderProps) 
           </div>
 
           {/* Action buttons (Desktop) */}
-          <div className="hidden sm:flex mb-4">
+          <div className="hidden sm:flex mb-4 gap-3">
+            <button 
+              onClick={handleShare}
+              className="px-5 py-2.5 rounded-full border border-white/20 bg-[#1E1E2E]/80 hover:bg-white/10 text-sm font-bold text-white transition-colors backdrop-blur-sm shadow-sm flex items-center gap-2"
+            >
+              {copied ? <Check className="w-4 h-4 text-green-400" /> : <Share2 className="w-4 h-4" />}
+              {copied ? 'Copied' : 'Public URL'}
+            </button>
             {isOwner && (
               <button 
                 onClick={() => setIsEditModalOpen(true)}

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import MessageButton from './MessageButton'
 import UpvoteButton from '@/components/UpvoteButton'
+import ProjectComments from '@/components/ProjectComments'
 
 export default async function ProjectDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -39,6 +40,23 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
       .eq('voter_id', user.id)
       .single()
     if (vote) hasVoted = true
+  }
+
+  // Fetch comments
+  const { data: comments, error: commentsError } = await supabase
+    .from('project_comments')
+    .select(`
+      *,
+      profiles:user_id (
+        username,
+        avatar_url
+      )
+    `)
+    .eq('project_id', project.id)
+    .order('created_at', { ascending: false })
+
+  if (commentsError) {
+    console.error('Error fetching comments:', commentsError)
   }
 
   return (
@@ -82,6 +100,18 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
               initialHasVoted={hasVoted}
               isLoggedIn={isLoggedIn}
             />
+            
+            {project.live_url && (
+              <a
+                href={project.live_url.startsWith('http') ? project.live_url : `https://${project.live_url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium transition-colors bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/10 shadow-sm"
+              >
+                Visit Site
+                <svg className="ml-2 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            )}
             
             <MessageButton 
               projectId={project.id}
@@ -157,6 +187,13 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
             </section>
           </div>
         </div>
+
+        {/* Comments Section */}
+        <ProjectComments 
+          projectId={project.id} 
+          comments={comments || []} 
+          currentUser={user} 
+        />
       </div>
     </div>
   )

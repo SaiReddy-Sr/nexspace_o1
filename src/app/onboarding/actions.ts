@@ -3,6 +3,17 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
+export async function checkUsernameAvailability(username: string) {
+  if (!username) return true
+  const supabase = await createClient()
+  const { count } = await supabase
+    .from('profiles')
+    .select('id', { count: 'exact', head: true })
+    .eq('username', username.toLowerCase())
+
+  return count === 0
+}
+
 export async function createProfile(formData: FormData) {
   const supabase = await createClient()
   
