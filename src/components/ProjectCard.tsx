@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRef, useState } from 'react'
 
 interface Profile {
   username: string
@@ -18,60 +17,44 @@ interface Project {
   media_type: 'image' | 'video'
   created_at: string
   profiles: Profile
+  featured?: boolean
+  featured_position?: number | null
 }
 
 export default function ProjectCard({ project, isOwner, onQuickView }: { project: Project, isOwner?: boolean, onQuickView?: (project: Project) => void }) {
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [opacity, setOpacity] = useState(0)
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top })
-  }
+  const isTopFeatured = project.featured_position === 1
 
   return (
-    <div className="group relative flex flex-col min-w-0">
-      {/* Image Container */}
-      <div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setOpacity(1)}
-        onMouseLeave={() => setOpacity(0)}
-        className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-card border border-border shadow-lg shadow-black/40 group-hover:shadow-2xl group-hover:shadow-accent/20 group-hover:border-accent/50 group-hover:-translate-y-1 transition-all duration-300"
-      >
-        <div
-          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
-          style={{
-            opacity,
-            background: `radial-gradient(400px circle at ${position.x}px ${position.y}px, rgba(255,255,255,0.06), transparent 40%)`,
-          }}
-        />
-        
-        {/* Primary link covering the whole image */}
-        {onQuickView ? (
-          <button onClick={(e) => { e.preventDefault(); onQuickView(project); }} className="absolute inset-0 z-10 text-left cursor-zoom-in">
-            <span className="sr-only">View project {project.title}</span>
-          </button>
-        ) : (
-          <Link href={`/project/${project.id}`} className="absolute inset-0 z-10">
-            <span className="sr-only">View project {project.title}</span>
+    <div className={`group relative flex flex-col sm:flex-row gap-5 p-4 rounded-2xl hover:bg-foreground/5 transition-colors border-b border-white/5 last:border-b-0 ${isTopFeatured ? 'bg-foreground/[0.02] border-white/10 shadow-sm' : ''}`}>
+      
+      {/* Primary link covering the whole row */}
+      {onQuickView ? (
+        <button onClick={(e) => { e.preventDefault(); onQuickView(project); }} className="absolute inset-0 z-10 text-left cursor-zoom-in rounded-2xl">
+          <span className="sr-only">View project {project.title}</span>
+        </button>
+      ) : (
+        <Link href={`/project/${project.id}`} className="absolute inset-0 z-10 rounded-2xl">
+          <span className="sr-only">View project {project.title}</span>
+        </Link>
+      )}
+
+      {isOwner && (
+        <div className="absolute top-4 right-4 z-20">
+          <Link
+            href={`/dashboard/edit-project/${project.id}`}
+            className="inline-flex items-center px-3 py-1.5 rounded-full bg-background/80 text-xs font-medium text-foreground shadow-sm border border-border hover:bg-foreground hover:text-background backdrop-blur-md transition-colors relative z-30"
+          >
+            Edit
           </Link>
-        )}
+        </div>
+      )}
 
-        {isOwner && (
-          <div className="absolute top-3 right-3 z-20">
-            <Link
-              href={`/dashboard/edit-project/${project.id}`}
-              className="inline-flex items-center px-3 py-1.5 rounded-full bg-background/60 text-xs font-medium text-foreground shadow-sm border border-border hover:bg-foreground hover:text-background backdrop-blur-md transition-colors relative z-30"
-            >
-              Edit
-            </Link>
-          </div>
-        )}
-
-        {/* Media */}
+      {/* Thumbnail */}
+      <div
+        className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-card border border-border ${
+          isTopFeatured ? 'w-full sm:w-64 aspect-[4/3]' : 'w-full sm:w-48 aspect-[4/3]'
+        }`}
+      >
         <div className="relative z-1 flex items-center justify-center w-full h-full">
           {project.media_url ? (
             project.media_type === 'video' ? (
@@ -94,38 +77,60 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
           ) : (
             <span className="text-foreground/50 text-sm font-medium">No media</span>
           )}
-          
-          {/* Subtle gradient overlay at bottom for contrast / framing */}
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
         </div>
       </div>
 
-      {/* Attribution Row */}
-      <div className="mt-3 flex items-center justify-between px-1">
-        <Link
-          href={`/profile/${project.profiles.username}`}
-          className="relative z-20 flex items-center space-x-2 group/profile min-w-0"
-        >
-          {project.profiles.avatar_url ? (
-            <img
-              src={project.profiles.avatar_url}
-              alt={project.profiles.username}
-              className="w-6 h-6 rounded-full bg-border object-cover flex-shrink-0"
-            />
-          ) : (
-            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-bold text-foreground/50">
-                {project.profiles.username.charAt(0).toUpperCase()}
+      {/* Content */}
+      <div className="flex flex-col min-w-0 justify-center py-1">
+        {/* Attribution Row */}
+        <div className="flex items-center space-x-2 mb-2 relative z-20 pointer-events-none group-hover:pointer-events-auto">
+          <Link href={`/profile/${project.profiles.username}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+            {project.profiles.avatar_url ? (
+              <img
+                src={project.profiles.avatar_url}
+                alt={project.profiles.username}
+                className="w-5 h-5 rounded-full bg-border object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[9px] font-bold text-foreground/50">
+                  {project.profiles.username.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <span className="font-medium text-sm text-foreground/70 truncate">
+              {project.profiles.username}
+            </span>
+          </Link>
+        </div>
+
+        {/* Title */}
+        <h3 className={`font-bold text-foreground truncate ${isTopFeatured ? 'text-2xl mb-2' : 'text-lg mb-1'}`}>
+          {project.title}
+        </h3>
+
+        {/* Description */}
+        {project.description && (
+          <p className="text-sm text-foreground/70 line-clamp-2 sm:line-clamp-3 mb-3 max-w-2xl">
+            {project.description}
+          </p>
+        )}
+
+        {/* Tags */}
+        {project.tech_tags && project.tech_tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {project.tech_tags.slice(0, 4).map((tag, idx) => (
+              <span key={idx} className="px-2 py-1 rounded-md bg-foreground/5 text-xs font-medium text-foreground/70">
+                {tag}
               </span>
-            </div>
-          )}
-          <span className="font-bold text-sm text-foreground truncate min-w-0 group-hover/profile:text-accent transition-colors">
-            {project.profiles.username}
-          </span>
-          <span className="text-sm text-foreground/50 truncate min-w-0 flex-shrink">
-            {project.title}
-          </span>
-        </Link>
+            ))}
+            {project.tech_tags.length > 4 && (
+              <span className="px-2 py-1 rounded-md bg-foreground/5 text-xs font-medium text-foreground/70">
+                +{project.tech_tags.length - 4}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

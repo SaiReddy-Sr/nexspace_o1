@@ -182,7 +182,7 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-10">
+            <div className="flex flex-col">
               {visibleProjects.map((project) => (
                 <ProjectCard 
                   key={project.id} 
@@ -192,7 +192,7 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
               ))}
               
               {visibleProjects.length === 0 && (
-                <div className="col-span-1 sm:col-span-2 xl:col-span-3 text-center py-12 text-foreground/50">
+                <div className="text-center py-12 text-foreground/50">
                   No projects match your filter.
                 </div>
               )}
@@ -233,53 +233,58 @@ export default function ProjectFeed({ initialProjects, user, role }: ProjectFeed
           />
         </div>
 
-        {/* Dynamic CTA Card */}
-        <div className="bg-card border border-border rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
-          {!user ? (
-            <>
-              <h3 className="text-lg font-bold text-foreground mb-2">Join nexspace</h3>
-              <p className="text-sm text-foreground/70 mb-5">Showcase your work to the community.</p>
-              <Link href="/signup" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Sign up</Link>
-            </>
-          ) : role === 'developer' ? (
-            <>
-              <h3 className="text-lg font-bold text-foreground mb-2">Post your next project</h3>
-              <p className="text-sm text-foreground/70 mb-5">Share what you've been working on.</p>
-              <Link href="/dashboard/new-project" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">New Project</Link>
-            </>
-          ) : (
-            <>
-              <h3 className="text-lg font-bold text-foreground mb-2">Need something built?</h3>
-              <p className="text-sm text-foreground/70 mb-5">Post a request and find a developer.</p>
-              <Link href="/requests/new" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Post a Request</Link>
-            </>
-          )}
-        </div>
+        {/* Combined Sidebar Widget */}
+        <div className="bg-card border border-border rounded-2xl flex flex-col shadow-sm">
+          {/* Dynamic CTA Card Section */}
+          <div className="p-6 flex flex-col items-center text-center">
+            {!user ? (
+              <>
+                <h3 className="text-lg font-bold text-foreground mb-2">Join nexspace</h3>
+                <p className="text-sm text-foreground/70 mb-5">Showcase your work to the community.</p>
+                <Link href="/signup" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Sign up</Link>
+              </>
+            ) : role === 'developer' ? (
+              <>
+                <h3 className="text-lg font-bold text-foreground mb-2">Post your next project</h3>
+                <p className="text-sm text-foreground/70 mb-5">Share what you've been working on.</p>
+                <Link href="/dashboard/new-project" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">New Project</Link>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-bold text-foreground mb-2">Need something built?</h3>
+                <p className="text-sm text-foreground/70 mb-5">Post a request and find a developer.</p>
+                <Link href="/requests/new" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Post a Request</Link>
+              </>
+            )}
+          </div>
 
-        {/* Top Ranked Widget */}
-        <div className="bg-card border border-border rounded-2xl p-6 flex flex-col shadow-sm">
-          <h3 className="text-lg font-bold text-foreground mb-4">Top Ranked</h3>
-          {featuredProjects.length === 0 ? (
-            <p className="text-sm text-foreground/50">No featured projects yet</p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {featuredProjects.slice(0, 5).map((fp, i) => (
-                <Link href={`/project/${fp.id}`} key={fp.id} className="flex items-center gap-3 group">
-                  <div className="w-10 h-10 rounded-xl bg-foreground/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-border">
-                    {fp.profiles?.avatar_url ? (
-                      <img src={fp.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-sm font-bold text-foreground">{fp.title.charAt(0).toUpperCase()}</span>
-                    )}
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-bold text-foreground truncate group-hover:text-accent transition-colors">{fp.title}</span>
-                    <span className="text-xs text-foreground/50 truncate">@{fp.profiles?.username}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          <hr className="border-border" />
+
+          {/* Top Ranked Widget Section */}
+          <div className="p-6 flex flex-col">
+            <h3 className="text-lg font-bold text-foreground mb-4">Top Ranked</h3>
+            {featuredProjects.length === 0 ? (
+              <p className="text-sm text-foreground/50">No featured projects yet</p>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {featuredProjects.slice(0, 5).map((fp, i) => (
+                  <Link href={`/project/${fp.id}`} key={fp.id} className="flex items-center gap-3 group">
+                    <div className="w-10 h-10 rounded-xl bg-foreground/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-border">
+                      {fp.profiles?.avatar_url ? (
+                        <img src={fp.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-sm font-bold text-foreground">{fp.title.charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-bold text-foreground truncate group-hover:text-accent transition-colors">{fp.title}</span>
+                      <span className="text-xs text-foreground/50 truncate">@{fp.profiles?.username}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
