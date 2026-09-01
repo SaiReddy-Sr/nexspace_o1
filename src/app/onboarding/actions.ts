@@ -15,6 +15,8 @@ export async function createProfile(formData: FormData) {
   const full_name = formData.get('full_name') as string
   const bio = formData.get('bio') as string
   const role = formData.get('role') as string // 'developer' or 'client'
+  const avatar_url = formData.get('avatar_url') as string
+  const banner_url = formData.get('banner_url') as string
 
   // Server-side validation
   if (!username) {
@@ -27,6 +29,8 @@ export async function createProfile(formData: FormData) {
     username,
     full_name: full_name || null,
     bio: bio || null,
+    avatar_url: avatar_url || null,
+    banner_url: banner_url || null,
   })
 
   if (error) {

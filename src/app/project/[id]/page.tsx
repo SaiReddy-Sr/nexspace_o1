@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import MessageButton from './MessageButton'
-import QuickViewTrigger from '@/components/QuickViewTrigger'
 import UpvoteButton from '@/components/UpvoteButton'
 
 export default async function ProjectDetailPage(props: { params: Promise<{ id: string }> }) {
@@ -83,10 +82,6 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
               initialHasVoted={hasVoted}
               isLoggedIn={isLoggedIn}
             />
-
-            {project.live_url && (
-              <QuickViewTrigger project={project} />
-            )}
             
             <MessageButton 
               projectId={project.id}

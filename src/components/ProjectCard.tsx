@@ -23,9 +23,7 @@ interface Project {
   vote_count: number
 }
 
-export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = false, isLoggedIn = false }: { project: Project, isOwner?: boolean, onQuickView?: (project: Project) => void, hasVoted?: boolean, isLoggedIn?: boolean }) {
-  const isTopFeatured = project.featured_position === 1
-
+export default function ProjectCard({ project, isOwner, hasVoted = false, isLoggedIn = false }: { project: Project, isOwner?: boolean, hasVoted?: boolean, isLoggedIn?: boolean }) {
   return (
     <div className="group relative flex flex-col bg-[#1E1E2E] border border-white/10 rounded-2xl p-3 sm:p-4 transition-all hover:bg-[#252535] hover:border-white/20 shadow-sm overflow-hidden">
       

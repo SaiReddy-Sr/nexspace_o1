@@ -73,7 +73,7 @@ function SortableProjectItem({
 export default function FeaturedDashboard({ initialProjects }: { initialProjects: Project[] }) {
   const [projects, setProjects] = useState(initialProjects)
   const [searchQuery, setSearchQuery] = useState('')
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
 
   const featuredList = projects
@@ -101,9 +101,6 @@ export default function FeaturedDashboard({ initialProjects }: { initialProjects
 
     if (over && active.id !== over.id) {
       setProjects((items) => {
-        const oldIndex = items.findIndex((i) => i.id === active.id)
-        const newIndex = items.findIndex((i) => i.id === over.id)
-        
         const currentFeatured = items
           .filter((p) => p.featured)
           .sort((a, b) => (a.featured_position ?? 0) - (b.featured_position ?? 0))

@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import AvatarUploader from './AvatarUploader'
-import BannerUploader from './BannerUploader'
+import ImageUploader from './ImageUploader'
 
 interface Profile {
   id: string
@@ -88,8 +87,9 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
               {/* Banner Section */}
               <div>
                 <label className="block text-sm font-medium text-white/70 mb-3">Profile Banner</label>
-                <BannerUploader 
-                  currentBannerUrl={bannerUrl} 
+                <ImageUploader 
+                  type="banner"
+                  currentImageUrl={bannerUrl} 
                   onUploadComplete={(url) => setBannerUrl(url)} 
                 />
               </div>
@@ -97,8 +97,9 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
               {/* Avatar Section */}
               <div>
                 <label className="block text-sm font-medium text-white/70 mb-3">Profile Picture</label>
-                <AvatarUploader 
-                  currentAvatarUrl={avatarUrl} 
+                <ImageUploader 
+                  type="avatar"
+                  currentImageUrl={avatarUrl} 
                   onUploadComplete={(url) => setAvatarUrl(url)} 
                 />
               </div>

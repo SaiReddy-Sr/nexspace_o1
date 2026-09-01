@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { SearchProvider } from "@/lib/SearchContext";
+import { SidebarProvider } from "@/lib/SidebarContext";
+import { MainLayoutWrapper } from "@/components/MainLayoutWrapper";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,15 +33,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background pt-16 overflow-x-hidden`}
       >
         <SearchProvider>
-          <div className="flex flex-col min-h-[calc(100vh-64px)]">
-            <Header />
-            <div className="flex flex-1 flex-col sm:flex-row relative w-full max-w-full">
-              <Sidebar />
-              <main className="flex-1 min-w-0 sm:pl-[72px] pb-16 sm:pb-0 min-h-[calc(100vh-64px)] flex flex-col w-full max-w-full">
-                {children}
-              </main>
+          <SidebarProvider>
+            <div className="flex flex-col min-h-[calc(100vh-64px)]">
+              <Header />
+              <div className="flex flex-1 flex-col sm:flex-row relative w-full max-w-full">
+                <Sidebar />
+                <MainLayoutWrapper>
+                  {children}
+                </MainLayoutWrapper>
+              </div>
             </div>
-          </div>
+          </SidebarProvider>
         </SearchProvider>
       </body>
     </html>

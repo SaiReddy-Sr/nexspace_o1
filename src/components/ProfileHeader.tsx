@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import EditProfileModal from './EditProfileModal'
-import { Calendar, Link as LinkIcon, MapPin } from 'lucide-react'
+import { Calendar, Link as LinkIcon } from 'lucide-react'
 
 interface ProfileHeaderProps {
   profile: any

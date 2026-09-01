@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { HeaderSearchInput, HeaderClientMenu } from './HeaderClientItems'
+import { HeaderHamburger } from './HeaderHamburger'
 
 export default async function Header() {
   const supabase = await createClient()
@@ -42,9 +43,7 @@ export default async function Header() {
     <header className="fixed top-0 left-0 right-0 h-16 bg-[#0f0f0f] z-[60] flex items-center justify-between px-4 sm:px-4 shadow-sm">
       {/* Left: Hamburger & Logo */}
       <div className="flex items-center gap-4">
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white hidden sm:block">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </button>
+        <HeaderHamburger />
         <Link href="/" className="flex items-center gap-1.5 group">
           <div className="flex items-center justify-center w-7 h-7 text-accent font-black">
             {/* Custom N logo svg approximation based on image */}

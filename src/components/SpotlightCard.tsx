@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sparkles, ExternalLink } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import MessageButton from '@/app/project/[id]/MessageButton'
 
 export default function SpotlightCard({ project, isLoggedIn }: { project: any, isLoggedIn: boolean }) {

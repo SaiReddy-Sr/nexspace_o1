@@ -48,6 +48,25 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
   
   // Filter logic
   const observerTarget = useRef<HTMLDivElement>(null)
+
+  // Focus Search if routed with ?focus=search
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('focus') === 'search') {
+        setTimeout(() => {
+          const input = document.getElementById('global-search-input')
+          if (input) input.focus()
+        }, 100)
+        
+        // Clean URL without triggering re-render
+        const newUrl = new URL(window.location.href)
+        newUrl.searchParams.delete('focus')
+        window.history.replaceState({}, '', newUrl)
+      }
+    }
+  }, [])
+
   const supabase = createClient()
 
   const loadMore = useCallback(async () => {
@@ -151,7 +170,14 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      filtered = filtered.filter(p => p.title.toLowerCase().includes(q))
+      filtered = filtered.filter(p => {
+        const matchTitle = p.title.toLowerCase().includes(q)
+        const matchDesc = p.description?.toLowerCase().includes(q) || false
+        const matchTags = p.tech_tags?.some(tag => tag.toLowerCase().includes(q)) || false
+        const matchUser = p.profiles?.username.toLowerCase().includes(q) || false
+        
+        return matchTitle || matchDesc || matchTags || matchUser
+      })
     }
     return filtered
   }, [projects, activeTag, searchQuery])

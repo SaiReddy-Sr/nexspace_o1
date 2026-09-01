@@ -2,14 +2,21 @@
 
 import { useState } from 'react'
 import { createProfile } from './actions'
+import ImageUploader from '@/components/ImageUploader'
 
 export default function OnboardingForm({ role, nextParam }: { role: string; nextParam?: string }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [bannerUrl, setBannerUrl] = useState<string | null>(null)
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setError('')
+    
+    // Append image URLs to form data
+    if (avatarUrl) formData.append('avatar_url', avatarUrl)
+    if (bannerUrl) formData.append('banner_url', bannerUrl)
     
     const { error: profileError } = await createProfile(formData)
     if (profileError) {
@@ -26,7 +33,32 @@ export default function OnboardingForm({ role, nextParam }: { role: string; next
       <input type="hidden" name="role" value={role} />
       {nextParam && <input type="hidden" name="next" value={nextParam} />}
       
-      <div className="space-y-4 rounded-md shadow-sm">
+      <div className="space-y-6 rounded-md shadow-sm">
+        {/* Profile Banner */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-3">
+            Profile Banner
+          </label>
+          <ImageUploader 
+            type="banner" 
+            currentImageUrl={bannerUrl} 
+            onUploadComplete={(url) => setBannerUrl(url)} 
+          />
+        </div>
+
+        {/* Profile Picture */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-3">
+            Profile Picture
+          </label>
+          <ImageUploader 
+            type="avatar" 
+            currentImageUrl={avatarUrl} 
+            onUploadComplete={(url) => setAvatarUrl(url)} 
+          />
+        </div>
+
+        {/* User Details */}
         <div>
           <label htmlFor="username" className="block text-sm font-medium text-foreground">
             Username *

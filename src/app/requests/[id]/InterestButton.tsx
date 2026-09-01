@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { expressInterest } from './actions'
 
 export default function InterestButton({ problemId, hasExpressedInterest }: { problemId: string, hasExpressedInterest: boolean }) {
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isInterested, setIsInterested] = useState(hasExpressedInterest)
 
@@ -32,10 +31,9 @@ export default function InterestButton({ problemId, hasExpressedInterest }: { pr
       ) : (
         <button
           onClick={handleInterest}
-          disabled={loading}
-          className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+          className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors w-full sm:w-auto"
         >
-          {loading ? 'Sending...' : "I'm Interested"}
+          {"I'm Interested"}
         </button>
       )}
       {error && (
