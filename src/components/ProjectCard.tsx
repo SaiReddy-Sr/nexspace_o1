@@ -25,7 +25,7 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
   const isTopFeatured = project.featured_position === 1
 
   return (
-    <div className={`group relative flex flex-col sm:flex-row gap-5 p-4 rounded-2xl hover:bg-foreground/5 transition-colors border-b border-white/5 last:border-b-0 ${isTopFeatured ? 'bg-foreground/[0.02] border-white/10 shadow-sm' : ''}`}>
+    <div className={`group relative flex flex-col sm:flex-row gap-4 sm:gap-6 py-4 sm:py-6 rounded-2xl hover:bg-foreground/5 transition-colors border-b border-white/5 last:border-b-0 ${isTopFeatured ? 'bg-foreground/[0.02] border-white/10 shadow-sm px-4 -mx-4' : ''}`}>
       
       {/* Primary link covering the whole row */}
       {onQuickView ? (
@@ -51,8 +51,8 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
 
       {/* Thumbnail */}
       <div
-        className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-card border border-border ${
-          isTopFeatured ? 'w-full sm:w-64 aspect-[4/3]' : 'w-full sm:w-48 aspect-[4/3]'
+        className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-card border border-border aspect-video ${
+          isTopFeatured ? 'w-full sm:w-[40%] sm:max-w-[420px]' : 'w-full sm:w-[35%] sm:max-w-[360px]'
         }`}
       >
         <div className="relative z-1 flex items-center justify-center w-full h-full">
@@ -81,19 +81,25 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
       </div>
 
       {/* Content */}
-      <div className="flex flex-col min-w-0 justify-center py-1">
+      <div className="flex flex-col min-w-0 py-1 flex-1">
+        
+        {/* Title */}
+        <h3 className={`font-bold text-foreground line-clamp-2 ${isTopFeatured ? 'text-2xl mb-2' : 'text-xl mb-1'}`}>
+          {project.title}
+        </h3>
+
         {/* Attribution Row */}
-        <div className="flex items-center space-x-2 mb-2 relative z-20 pointer-events-none group-hover:pointer-events-auto">
+        <div className="flex items-center space-x-2 mt-1 mb-3 relative z-20 pointer-events-none group-hover:pointer-events-auto">
           <Link href={`/profile/${project.profiles.username}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             {project.profiles.avatar_url ? (
               <img
                 src={project.profiles.avatar_url}
                 alt={project.profiles.username}
-                className="w-5 h-5 rounded-full bg-border object-cover flex-shrink-0"
+                className="w-6 h-6 rounded-full bg-border object-cover flex-shrink-0"
               />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
-                <span className="text-[9px] font-bold text-foreground/50">
+              <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] font-bold text-foreground/50">
                   {project.profiles.username.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -104,14 +110,9 @@ export default function ProjectCard({ project, isOwner, onQuickView }: { project
           </Link>
         </div>
 
-        {/* Title */}
-        <h3 className={`font-bold text-foreground truncate ${isTopFeatured ? 'text-2xl mb-2' : 'text-lg mb-1'}`}>
-          {project.title}
-        </h3>
-
         {/* Description */}
         {project.description && (
-          <p className="text-sm text-foreground/70 line-clamp-2 sm:line-clamp-3 mb-3 max-w-2xl">
+          <p className="text-sm text-foreground/70 line-clamp-2 mb-4 max-w-3xl leading-relaxed">
             {project.description}
           </p>
         )}

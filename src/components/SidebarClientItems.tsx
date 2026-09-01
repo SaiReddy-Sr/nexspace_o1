@@ -23,11 +23,9 @@ export function ClientSearchIcon() {
   }
 
   return (
-    <button onClick={handleClick} className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-      <Search className="w-[22px] h-[22px]" strokeWidth={2.5} />
-      <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50 hidden sm:block">
-        Search
-      </div>
+    <button onClick={handleClick} className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
+      <Search className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
+      <span className="text-[10px] font-medium hidden sm:block">Search</span>
     </button>
   )
 }
@@ -60,11 +58,9 @@ export function ClientProfileMenu({ user, username }: { user: any, username: str
 
   if (!user) {
     return (
-      <Link href="/login" className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-        <LogIn className="w-[22px] h-[22px]" strokeWidth={2.5} />
-        <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
-          Log in / Sign up
-        </div>
+      <Link href="/login" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
+        <LogIn className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
+        <span className="text-[10px] font-medium">Log in</span>
       </Link>
     )
   }
@@ -73,14 +69,10 @@ export function ClientProfileMenu({ user, username }: { user: any, username: str
     <div className="relative" ref={menuRef}>
       <button 
         onClick={() => setOpen(!open)}
-        className="relative group flex items-center justify-center w-12 h-12 rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors"
+        className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors"
       >
-        <User className="w-[22px] h-[22px]" strokeWidth={2.5} />
-        {!open && (
-          <div className="absolute bottom-full mb-2 sm:bottom-auto sm:left-full sm:mb-0 sm:ml-4 px-2 py-1 bg-foreground text-background text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-50">
-            Profile
-          </div>
-        )}
+        <User className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
+        <span className="text-[10px] font-medium">Profile</span>
       </button>
       
       {open && (
