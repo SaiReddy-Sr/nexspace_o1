@@ -23,9 +23,9 @@ export function ClientSearchIcon() {
   }
 
   return (
-    <button onClick={handleClick} className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-      <Search className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-      <span className="text-[10px] font-medium hidden sm:block">Search</span>
+    <button onClick={handleClick} className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg">
+      <Search className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+      <span className="text-[10px] font-normal truncate w-full text-center px-1">Search</span>
     </button>
   )
 }

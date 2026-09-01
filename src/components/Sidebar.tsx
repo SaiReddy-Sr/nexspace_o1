@@ -21,45 +21,47 @@ export default async function Sidebar() {
   }
 
   return (
-    <aside className="fixed bottom-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-t border-white/5 sm:top-[88px] sm:bottom-6 sm:left-6 sm:right-auto sm:w-[84px] sm:h-[calc(100vh-112px)] sm:border sm:border-white/10 sm:rounded-3xl sm:flex sm:flex-col sm:items-center py-2 sm:py-6 px-2 sm:px-0 flex justify-around sm:justify-start sm:gap-6 shadow-2xl">
+    <aside className="fixed bottom-0 left-0 right-0 z-50 bg-[#0f0f0f] border-t border-white/10 sm:top-16 sm:bottom-0 sm:left-0 sm:right-auto sm:w-[72px] sm:h-[calc(100vh-64px)] sm:border-t-0 sm:border-r sm:border-white/10 sm:rounded-none sm:flex sm:flex-col sm:items-center py-2 sm:py-3 px-2 sm:px-0 flex justify-around sm:justify-start gap-1 sm:gap-2 overflow-y-auto">
       
       {/* Main Nav Items */}
-      <div className="flex sm:flex-col justify-around sm:justify-start items-center w-full sm:w-auto flex-1 gap-0 sm:gap-2">
+      <div className="flex sm:flex-col justify-around sm:justify-start items-center w-full sm:w-full flex-1 gap-0 sm:gap-2">
         
         {/* Home */}
-        <Link href="/" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-          <Home className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-          <span className="text-[10px] font-medium">Home</span>
+        <Link href="/" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
+          <Home className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+          <span className="text-[10px] font-normal truncate w-full text-center px-1">Home</span>
         </Link>
 
         {/* Search */}
-        <ClientSearchIcon />
+        <div className="w-full mx-1">
+          <ClientSearchIcon />
+        </div>
 
         {/* Requests */}
-        <Link href="/requests" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-          <Briefcase className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-          <span className="text-[10px] font-medium">Requests</span>
+        <Link href="/requests" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
+          <Briefcase className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+          <span className="text-[10px] font-normal truncate w-full text-center px-1">Requests</span>
         </Link>
 
         {/* New Project (Developer) or Post Request (Client) */}
         {user && role === 'developer' && (
-          <Link href="/dashboard/new-project" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-            <PlusCircle className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-            <span className="text-[10px] font-medium">New</span>
+          <Link href="/dashboard/new-project" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
+            <PlusCircle className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+            <span className="text-[10px] font-normal truncate w-full text-center px-1">New</span>
           </Link>
         )}
         {user && role === 'client' && (
-          <Link href="/requests/new" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-            <PlusCircle className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-            <span className="text-[10px] font-medium">New</span>
+          <Link href="/requests/new" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
+            <PlusCircle className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+            <span className="text-[10px] font-normal truncate w-full text-center px-1">New</span>
           </Link>
         )}
 
         {/* Messages */}
         {user && (
-          <Link href="/dashboard/messages" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-            <MessageSquare className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-            <span className="text-[10px] font-medium">Messages</span>
+          <Link href="/dashboard/messages" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
+            <MessageSquare className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+            <span className="text-[10px] font-normal truncate w-full text-center px-1">Messages</span>
           </Link>
         )}
 
@@ -67,10 +69,10 @@ export default async function Sidebar() {
         <div className="hidden sm:block flex-1" />
 
         {/* Settings */}
-        <div className="sm:pb-2">
-          <Link href="/settings" className="group flex flex-col items-center justify-center w-16 h-14 sm:w-[76px] sm:h-[72px] rounded-xl hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors">
-            <Settings className="w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] mb-1" strokeWidth={2.0} />
-            <span className="text-[10px] font-medium">Settings</span>
+        <div className="sm:pb-2 w-full mx-1">
+          <Link href="/settings" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg">
+            <Settings className="w-6 h-6 mb-1.5" strokeWidth={1.5} />
+            <span className="text-[10px] font-normal truncate w-full text-center px-1">Settings</span>
           </Link>
         </div>
       </div>

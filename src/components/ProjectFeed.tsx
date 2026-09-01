@@ -177,14 +177,14 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
       {/* Left Column: Feed */}
       <div className="flex-1 min-w-0">
         {/* Sticky filter bar */}
-        <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-4 mb-8 bg-background/90 backdrop-blur-md border-b border-white/5">
-          <div className="flex overflow-x-auto pb-2 scrollbar-hide gap-2 items-center">
+        <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 mb-6 bg-[#0f0f0f]/95 backdrop-blur-md">
+          <div className="flex overflow-x-auto pb-2 scrollbar-hide gap-3 items-center">
             <button
               onClick={() => setActiveTag(null)}
-              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+              className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                 !activeTag 
-                  ? 'bg-foreground text-background' 
-                  : 'bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
+                  ? 'bg-white text-black border-transparent' 
+                  : 'bg-white/10 text-white border-white/10 hover:bg-white/20'
               }`}
             >
               All
@@ -193,13 +193,13 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
               <button
                 key={tag}
                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                   activeTag === tag
-                    ? 'bg-foreground text-background'
-                    : 'bg-foreground/5 text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
+                    ? 'bg-white text-black border-transparent'
+                    : 'bg-white/10 text-white border-white/10 hover:bg-white/20'
                 }`}
               >
-                {tag} <span className="opacity-40 ml-1 text-xs">({count})</span>
+                {tag}
               </button>
             ))}
           </div>
@@ -259,57 +259,41 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
       </div>
 
       {/* Right Column: Sidebar (Home only) */}
-      <aside className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6 pt-4 lg:pt-0">
-
-        {/* Combined Sidebar Widget */}
-        <div className="bg-card border border-border rounded-2xl flex flex-col shadow-sm">
-          {/* Dynamic CTA Card Section */}
-          <div className="p-6 flex flex-col items-center text-center">
-            {!user ? (
-              <>
-                <h3 className="text-lg font-bold text-foreground mb-2">Join nexspace</h3>
-                <p className="text-sm text-foreground/70 mb-5">Showcase your work to the community.</p>
-                <Link href="/signup" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Sign up</Link>
-              </>
-            ) : role === 'developer' ? (
-              <>
-                <h3 className="text-lg font-bold text-foreground mb-2">Post your next project</h3>
-                <p className="text-sm text-foreground/70 mb-5">Share what you've been working on.</p>
-                <Link href="/dashboard/new-project" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">New Project</Link>
-              </>
-            ) : (
-              <>
-                <h3 className="text-lg font-bold text-foreground mb-2">Need something built?</h3>
-                <p className="text-sm text-foreground/70 mb-5">Post a request and find a developer.</p>
-                <Link href="/requests/new" className="group relative flex w-full justify-center py-2.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-hover transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background">Post a Request</Link>
-              </>
-            )}
-          </div>
-
-          <hr className="border-border" />
-
-          {/* Top Ranked Widget Section */}
-          <div className="p-6 flex flex-col">
-            <h3 className="text-lg font-bold text-foreground mb-4">Top Rankings</h3>
+      <aside className="w-full lg:w-[340px] flex-shrink-0 flex flex-col gap-6 pt-4 lg:pt-0">
+        
+        {/* Top Rankings Widget Section */}
+        <div className="bg-[#212121] rounded-2xl flex flex-col shadow-md overflow-hidden">
+          <div className="p-5 flex flex-col">
+            <h3 className="text-[16px] font-medium text-white/80 mb-4 px-1">Top Rankings</h3>
             {topRankedProjects.length === 0 ? (
-              <p className="text-sm text-foreground/50">No rankings yet</p>
+              <p className="text-sm text-foreground/50 px-1">No rankings yet</p>
             ) : (
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col">
                 {topRankedProjects.map((fp, i) => (
-                  <Link href={`/project/${fp.id}`} key={fp.id} className="flex items-center gap-4 group">
-                    <div className="text-foreground/40 font-mono text-sm w-4">{i + 1}</div>
-                    <div className="w-10 h-10 rounded-xl bg-foreground/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-border group-hover:border-accent/50 transition-colors">
+                  <Link href={`/project/${fp.id}`} key={fp.id} className="flex items-center gap-3 group p-2 rounded-xl hover:bg-white/5 transition-colors">
+                    <div className={`font-mono text-lg w-4 text-center font-medium ${i < 3 ? (i === 2 ? 'text-orange-400' : 'text-white/60') : 'text-white/30'}`}>
+                      {i + 1}
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-foreground/5 overflow-hidden flex-shrink-0 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-colors">
                       {fp.profiles?.avatar_url ? (
                         <img src={fp.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-sm font-bold text-foreground">{fp.title.charAt(0).toUpperCase()}</span>
                       )}
                     </div>
-                    <div className="flex flex-col min-w-0 flex-1">
-                      <span className="text-sm font-bold text-foreground truncate group-hover:text-accent transition-colors">{fp.title}</span>
-                      <span className="text-xs text-foreground/50 truncate">
+                    <div className="flex flex-col min-w-0 flex-1 justify-center">
+                      <span className="text-[15px] font-semibold text-white truncate group-hover:text-accent transition-colors">{fp.title}</span>
+                      <span className="text-[13px] text-white/50 truncate">
                         {fp.vote_count >= 1000 ? (fp.vote_count / 1000).toFixed(1) + 'K' : fp.vote_count} Upvotes
                       </span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-6 text-center">
+                      {i % 2 === 0 ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                      )}
+                      <span className="text-[10px] text-white/40">{i === 1 ? '1' : '0'}</span>
                     </div>
                   </Link>
                 ))}

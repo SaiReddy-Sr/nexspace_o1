@@ -11,16 +11,20 @@ export function HeaderSearchInput() {
   const { searchQuery, setSearchQuery } = useSearch()
 
   return (
-    <div className="relative w-full max-w-xl mx-auto hidden sm:block">
-      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/50" />
-      <input 
-        id="global-search-input"
-        type="text" 
-        placeholder="Search NexSpace..." 
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full bg-[#151518] border border-white/5 rounded-full py-2.5 pl-12 pr-4 text-sm text-white placeholder-foreground/50 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
-      />
+    <div className="flex w-full max-w-[600px] mx-auto hidden sm:flex">
+      <div className="relative flex-1">
+        <input 
+          id="global-search-input"
+          type="text" 
+          placeholder="Search NexSpace..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-[#121212] border border-white/10 rounded-l-full py-2 px-4 text-[15px] text-white placeholder-white/40 focus:outline-none focus:border-accent focus:ml-0 transition-all shadow-inner"
+        />
+      </div>
+      <button className="bg-white/10 border border-l-0 border-white/10 rounded-r-full px-5 flex items-center justify-center hover:bg-white/20 transition-colors">
+        <Search className="w-[18px] h-[18px] text-white/70" />
+      </button>
     </div>
   )
 }
