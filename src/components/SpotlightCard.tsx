@@ -9,7 +9,7 @@ export default function SpotlightCard({ project, isLoggedIn }: { project: any, i
     <div className="group relative flex flex-col sm:flex-row gap-4 sm:gap-4 py-2 transition-colors mb-6">
       
       {/* Thumbnail */}
-      <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-[#212121] aspect-[16/9] w-full sm:w-[45%] sm:max-w-[420px]">
+      <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-[#212121] aspect-[16/9] w-full sm:w-[360px]">
         <div className="relative z-1 flex items-center justify-center w-full h-full">
           {project.media_url ? (
             project.media_type === 'video' ? (

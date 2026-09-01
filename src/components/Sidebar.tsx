@@ -21,7 +21,7 @@ export default async function Sidebar() {
   }
 
   return (
-    <aside className="fixed bottom-0 left-0 right-0 z-50 bg-[#0f0f0f] border-t border-white/10 sm:top-16 sm:bottom-0 sm:left-0 sm:right-auto sm:w-[72px] sm:h-[calc(100vh-64px)] sm:border-t-0 sm:border-r sm:border-white/10 sm:rounded-none sm:flex sm:flex-col sm:items-center py-2 sm:py-3 px-2 sm:px-0 flex justify-around sm:justify-start gap-1 sm:gap-2 overflow-y-auto">
+    <aside className="fixed bottom-0 left-0 right-0 z-50 bg-[#0f0f0f] border-t border-white/10 sm:top-16 sm:bottom-0 sm:left-0 sm:right-auto sm:w-[72px] sm:h-[calc(100vh-64px)] sm:border-t-0 sm:border-r sm:border-white/10 sm:rounded-none sm:flex sm:flex-col sm:items-center py-2 sm:py-3 px-2 sm:px-0 flex justify-around sm:justify-start gap-1 sm:gap-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       
       {/* Main Nav Items */}
       <div className="flex sm:flex-col justify-around sm:justify-start items-center w-full sm:w-full flex-1 gap-0 sm:gap-2">

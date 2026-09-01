@@ -52,7 +52,7 @@ export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = 
       )}
 
       {/* Thumbnail */}
-      <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-[#212121] aspect-[16/9] w-full sm:w-[45%] sm:max-w-[420px]">
+      <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-[#212121] aspect-[16/9] w-full sm:w-[360px]">
         <div className="relative z-1 flex items-center justify-center w-full h-full">
           {project.media_url ? (
             project.media_type === 'video' ? (
@@ -79,7 +79,7 @@ export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = 
       </div>
 
       {/* Content */}
-      <div className="flex flex-col min-w-0 py-1 flex-1 pr-4">
+      <div className="flex flex-col min-w-0 py-1 flex-1 pr-2">
         
         {/* Title */}
         <h3 className="font-semibold text-white text-[18px] mb-1 leading-tight line-clamp-2">
@@ -91,9 +91,9 @@ export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = 
           5.2k views • 2 weeks ago
         </div>
 
-        {/* Attribution Row */}
+        {/* Attribution Row with Upvote Button */}
         <div className="flex items-center mt-1 mb-2 relative z-20 pointer-events-none group-hover:pointer-events-auto">
-          <Link href={`/profile/${project.profiles.username}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <Link href={`/profile/${project.profiles.username}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity mr-4">
             {project.profiles.avatar_url ? (
               <img
                 src={project.profiles.avatar_url}
@@ -111,23 +111,23 @@ export default function ProjectCard({ project, isOwner, onQuickView, hasVoted = 
               {project.profiles.username} <span className="text-white/40 ml-1">(Verified Partner)</span>
             </span>
           </Link>
+
+          <div className="ml-auto">
+             <UpvoteButton
+                projectId={project.id}
+                initialVoteCount={project.vote_count || 0}
+                initialHasVoted={hasVoted}
+                isLoggedIn={isLoggedIn}
+              />
+          </div>
         </div>
 
         {/* Description */}
         {project.description && (
-          <p className="text-[13px] text-white/50 line-clamp-2 max-w-3xl leading-relaxed mt-2">
+          <p className="text-[13px] text-white/50 line-clamp-2 max-w-2xl leading-relaxed mt-2">
             {project.description}
           </p>
         )}
-
-        <div className="mt-auto flex justify-end relative z-20 pointer-events-none group-hover:pointer-events-auto">
-           <UpvoteButton
-              projectId={project.id}
-              initialVoteCount={project.vote_count || 0}
-              initialHasVoted={hasVoted}
-              isLoggedIn={isLoggedIn}
-            />
-        </div>
       </div>
     </div>
   )
