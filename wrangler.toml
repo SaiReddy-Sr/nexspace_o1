@@ -1,0 +1,8 @@
+name = "nexspace-o1"
+main = ".open-next/worker.js"
+
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Use the new assets format
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
