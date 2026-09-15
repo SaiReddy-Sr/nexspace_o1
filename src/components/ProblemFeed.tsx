@@ -6,9 +6,11 @@ import ProblemCard from './ProblemCard'
 
 interface ProblemFeedProps {
   initialProblems: any[]
+  statusFilter?: 'open' | 'closed' | 'all'
+  initialTag?: string
 }
 
-export default function ProblemFeed({ initialProblems }: ProblemFeedProps) {
+export default function ProblemFeed({ initialProblems, statusFilter = 'open', initialTag }: ProblemFeedProps) {
   const [problems, setProblems] = useState<any[]>(initialProblems)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -24,7 +26,7 @@ export default function ProblemFeed({ initialProblems }: ProblemFeedProps) {
     const from = page * 10
     const to = from + 9
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('problems')
       .select(`
         *,
@@ -33,7 +35,16 @@ export default function ProblemFeed({ initialProblems }: ProblemFeedProps) {
           avatar_url
         )
       `)
-      .eq('status', 'open')
+
+    if (statusFilter !== 'all') {
+      query = query.eq('status', statusFilter)
+    }
+
+    if (initialTag) {
+      query = query.contains('tags', [initialTag])
+    }
+
+    const { data, error } = await query
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -58,7 +69,7 @@ export default function ProblemFeed({ initialProblems }: ProblemFeedProps) {
     }
 
     setLoading(false)
-  }, [page, loading, hasMore, supabase])
+  }, [page, loading, hasMore, supabase, statusFilter])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -92,6 +103,17 @@ export default function ProblemFeed({ initialProblems }: ProblemFeedProps) {
 
   return (
     <div className="w-full">
+      {initialTag && (
+        <div className="mb-6 flex items-center">
+          <span className="text-sm text-foreground/70 mr-3">Active filter:</span>
+          <div className="inline-flex items-center px-3 py-1.5 rounded-[4px] text-[13px] font-mono font-bold bg-accent/20 text-accent border border-accent/30">
+            {initialTag}
+            <a href={statusFilter === 'closed' ? '/requests/closed' : '/requests'} className="ml-2 hover:text-white transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </a>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {problems.map((problem) => (
           <ProblemCard key={problem.id} problem={problem} />

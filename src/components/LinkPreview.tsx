@@ -1,0 +1,72 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+
+export default function LinkPreview({ url, displayMode = 'card' }: { url: string, displayMode?: 'card' | 'thumbnail' }) {
+  const [data, setData] = useState<{ title?: string, description?: string, image?: string } | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    async function fetchOG() {
+      try {
+        const res = await fetch(`/api/og?url=${encodeURIComponent(url)}`)
+        if (res.ok && isMounted) {
+          const json = await res.json()
+          setData(json)
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchOG()
+    return () => { isMounted = false }
+  }, [url])
+
+  if (loading) {
+    if (displayMode === 'thumbnail') {
+      return <div className="w-full h-full bg-white/5 animate-pulse flex items-center justify-center"><span className="text-xs text-white/30">Loading preview...</span></div>
+    }
+    return <div className="h-24 w-full bg-white/5 animate-pulse rounded-xl mt-4"></div>
+  }
+
+  if (!data || (!data.title && !data.image)) {
+    if (displayMode === 'thumbnail') return null
+    return null
+  }
+
+  if (displayMode === 'thumbnail') {
+    return data.image ? (
+      <img src={data.image} alt={data.title || "Link preview"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+    ) : (
+      <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center p-6 text-center">
+        <span className="text-white/60 font-semibold text-lg line-clamp-2">{data.title}</span>
+      </div>
+    )
+  }
+
+  return (
+    <a 
+      href={url} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      className="flex items-center gap-4 border border-border rounded-xl overflow-hidden hover:bg-accent/5 hover:border-accent/40 transition-colors bg-background/50 relative z-20 mt-4 group no-underline"
+    >
+      {data.image && (
+        <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-border/30 border-r border-border overflow-hidden">
+          <img src={data.image} alt={data.title || "Link preview"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        </div>
+      )}
+      <div className="p-3 sm:p-4 flex flex-col justify-center min-w-0 flex-1">
+        {data.title && <h4 className="text-sm font-bold text-foreground line-clamp-1 mb-1">{data.title}</h4>}
+        {data.description && <p className="text-xs text-foreground/60 line-clamp-2 leading-relaxed">{data.description}</p>}
+        <span className="text-[10px] text-accent font-mono mt-2 flex items-center gap-1.5 opacity-80">
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          {new URL(url).hostname}
+        </span>
+      </div>
+    </a>
+  )
+}

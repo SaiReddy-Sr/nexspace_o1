@@ -79,3 +79,39 @@ export async function startConversationFromProblem(problemId: string, developerI
 
   return { success: true, conversationId: newConv.id, currentUserId: user.id }
 }
+
+export async function updateProblem(problemId: string, data: { title: string, description: string, tags: string, status: string }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { error: 'Not logged in' }
+
+  // Check ownership
+  const { data: problem } = await supabase.from('problems').select('client_id').eq('id', problemId).single()
+  
+  if (!problem || problem.client_id !== user.id) {
+    return { error: 'Unauthorized. Only the owner can edit this request.' }
+  }
+
+  const tagsArray = data.tags.split(',').map(t => t.trim()).filter(Boolean)
+
+  const { error } = await supabase
+    .from('problems')
+    .update({
+      title: data.title,
+      description: data.description,
+      tags: tagsArray,
+      status: data.status
+    })
+    .eq('id', problemId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath(`/requests/${problemId}`)
+  revalidatePath('/requests')
+  revalidatePath('/requests/closed')
+  
+  return { success: true }
+}

@@ -43,6 +43,24 @@ export async function toggleVote(projectId: string) {
       console.error('Error voting:', error)
       return { error: 'Failed to cast vote' }
     }
+
+    // Fetch project to get developer_id
+    const { data: projectData } = await supabase
+      .from('projects')
+      .select('developer_id')
+      .eq('id', projectId)
+      .single()
+
+    if (projectData && projectData.developer_id !== user.id) {
+      // Insert notification
+      await supabase.from('notifications').insert({
+        user_id: projectData.developer_id,
+        actor_id: user.id,
+        type: 'upvote',
+        entity_id: projectId
+      })
+    }
+
     return { success: true, action: 'added' }
   }
 }

@@ -2,7 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import ProjectFeed from '@/components/ProjectFeed'
 import { getTopRankedProjects } from './queries'
 
-export default async function Home() {
+export default async function Home(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
+  const initialTag = searchParams?.tag as string | undefined;
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -23,7 +26,7 @@ export default async function Home() {
     }
   }
 
-  const { data: initialProjects, error } = await supabase
+  let query = supabase
     .from('projects')
     .select(`
       *,
@@ -35,6 +38,12 @@ export default async function Home() {
     .order('featured_position', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
     .range(0, 9)
+
+  if (initialTag) {
+    query = query.contains('tech_tags', [initialTag])
+  }
+
+  const { data: initialProjects, error } = await query
 
   if (error) {
     console.error('Error fetching initial projects:', error)
@@ -53,6 +62,7 @@ export default async function Home() {
           role={role} 
           initialUserVotes={initialUserVotes}
           topRankedProjects={topRankedProjects}
+          initialTag={initialTag}
         />
       </main>
     </div>

@@ -3,9 +3,39 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, User, LogIn, Settings } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useSearch } from '@/lib/SearchContext'
+
+export function HeaderLogo() {
+  return (
+    <Link 
+      href="/" 
+      className="flex items-center gap-1.5 group"
+      onClick={(e) => {
+        if (window.location.pathname === '/') {
+          e.preventDefault()
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }}
+    >
+      <div className="flex items-center justify-center transition-transform group-hover:scale-[1.05] w-24 h-8 relative mix-blend-lighten -ml-2 -mr-6">
+        <Image 
+          src="/nxs_logo.png" 
+          alt="NXS Logo" 
+          fill
+          className="object-contain scale-[2]" 
+          priority
+        />
+      </div>
+      <span className="font-bold text-xl tracking-tight hidden sm:block text-foreground">
+        NexSpace
+      </span>
+    </Link>
+  )
+}
+
 
 export function HeaderSearchInput() {
   const { searchQuery, setSearchQuery } = useSearch()

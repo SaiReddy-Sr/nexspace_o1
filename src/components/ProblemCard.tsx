@@ -47,12 +47,13 @@ export default function ProblemCard({ problem }: { problem: Problem }) {
         {problem.tags && problem.tags.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-2">
             {problem.tags.slice(0, 5).map((tag, index) => (
-              <span
+              <Link
+                href={`/requests?tag=${encodeURIComponent(tag)}`}
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-[4px] text-[11px] font-mono font-semibold bg-accent/10 text-accent uppercase tracking-wider"
+                className="inline-flex items-center px-2 py-1 rounded-[4px] text-[11px] font-mono font-semibold bg-accent/10 text-accent uppercase tracking-wider hover:bg-accent hover:text-white transition-colors relative z-20"
               >
                 {tag}
-              </span>
+              </Link>
             ))}
             {problem.tags.length > 5 && (
               <span className="inline-flex items-center px-2 py-1 rounded-[4px] text-[11px] font-mono font-semibold bg-border/50 text-foreground/70 uppercase tracking-wider">

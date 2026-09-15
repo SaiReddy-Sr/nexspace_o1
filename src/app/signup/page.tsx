@@ -5,6 +5,19 @@ import { signupWithPassword, signupWithMagicLink } from './actions'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
+function getMailProviderUrl(email: string) {
+  const domain = email.split('@')[1]?.toLowerCase()
+  if (!domain) return null
+  
+  if (domain === 'gmail.com') return 'https://mail.google.com/'
+  if (domain === 'outlook.com' || domain === 'hotmail.com' || domain === 'live.com') return 'https://outlook.live.com/'
+  if (domain === 'yahoo.com') return 'https://mail.yahoo.com/'
+  if (domain === 'proton.me' || domain === 'protonmail.com') return 'https://mail.proton.me/'
+  if (domain === 'icloud.com' || domain === 'me.com' || domain === 'mac.com') return 'https://www.icloud.com/mail'
+  
+  return null
+}
+
 function SignupForm() {
   const [role, setRole] = useState<'developer' | 'client'>('developer')
   const [method, setMethod] = useState<'password' | 'magic_link'>('password')
@@ -13,10 +26,12 @@ function SignupForm() {
   const nextParam = searchParams.get('next') || undefined
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [submittedEmail, setSubmittedEmail] = useState('')
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setMessage('')
+    setSubmittedEmail('')
     const email = formData.get('email') as string
     
     if (method === 'password') {
@@ -26,6 +41,7 @@ function SignupForm() {
         setMessage(error)
       } else {
         setMessage('Check your email to confirm your account.')
+        setSubmittedEmail(email)
       }
     } else {
       const { error } = await signupWithMagicLink(email, role, nextParam)
@@ -33,6 +49,7 @@ function SignupForm() {
         setMessage(error)
       } else {
         setMessage('Check your email for the magic link.')
+        setSubmittedEmail(email)
       }
     }
     setLoading(false)
@@ -135,7 +152,21 @@ function SignupForm() {
 
           {message && (
             <div className="text-sm text-center text-accent font-medium">
-              {message}
+              {submittedEmail && getMailProviderUrl(submittedEmail) && !message.toLowerCase().includes('failed') ? (
+                <a 
+                  href={getMailProviderUrl(submittedEmail)!} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:underline underline-offset-2 flex items-center justify-center gap-1"
+                >
+                  {message}
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : (
+                message
+              )}
             </div>
           )}
 

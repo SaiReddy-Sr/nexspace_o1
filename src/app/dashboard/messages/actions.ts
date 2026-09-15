@@ -50,19 +50,29 @@ export async function sendMessage(conversationId: string, content: string) {
   }
 
   // 3. Insert the message
-  const { error: insertError } = await supabase
+  const { data: insertedMsg, error: insertError } = await supabase
     .from('messages')
     .insert({
       conversation_id: conversationId,
       sender_id: user.id,
       content: trimmedContent,
     })
+    .select('*')
+    .single()
 
   if (insertError) {
     return { error: insertError.message }
   }
 
-  return { success: true }
+  // 4. Insert notification for the recipient
+  await supabase.from('notifications').insert({
+    user_id: otherParticipantId,
+    actor_id: user.id,
+    type: 'message',
+    entity_id: conversationId
+  })
+
+  return { success: true, message: insertedMsg }
 }
 
 export async function blockUser(conversationId: string, blockedId: string) {

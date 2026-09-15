@@ -26,7 +26,24 @@ export async function addComment(projectId: string, content: string, rating: num
 
   if (error) {
     console.error('Error adding comment:', error)
-    return { error: 'Failed to add comment.' }
+    return { error: error.message || 'Failed to add comment.' }
+  }
+
+  // Fetch project to get developer_id
+  const { data: projectData } = await supabase
+    .from('projects')
+    .select('developer_id')
+    .eq('id', projectId)
+    .single()
+
+  if (projectData && projectData.developer_id !== user.id) {
+    // Insert notification
+    await supabase.from('notifications').insert({
+      user_id: projectData.developer_id,
+      actor_id: user.id,
+      type: 'comment',
+      entity_id: projectId
+    })
   }
 
   revalidatePath(`/project/${projectId}`)

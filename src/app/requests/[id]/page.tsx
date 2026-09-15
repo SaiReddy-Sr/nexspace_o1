@@ -3,6 +3,10 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import InterestButton from './InterestButton'
 import ClientActions from './ClientActions'
+import EditRequestButton from './EditRequestButton'
+import dynamic from 'next/dynamic'
+
+const MarkdownViewer = dynamic(() => import('@/components/MarkdownViewer'))
 
 export default async function RequestDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -77,12 +81,19 @@ export default async function RequestDetailPage(props: { params: Promise<{ id: s
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
         <div className="flex justify-between items-start mb-6">
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">
-            {problem.title}
-          </h1>
-          <span className="inline-flex shrink-0 items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-mono font-medium text-accent">
-            {problem.status}
-          </span>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">
+              {problem.title}
+            </h1>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex shrink-0 items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-mono font-medium text-accent">
+                {problem.status}
+              </span>
+              {isOwner && (
+                <EditRequestButton problem={problem} />
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center space-x-4 mb-8 pb-8 border-b border-border">
@@ -115,10 +126,8 @@ export default async function RequestDetailPage(props: { params: Promise<{ id: s
           </Link>
         </div>
 
-        <div className="prose prose-invert max-w-none mb-10">
-          <p className="text-foreground/80 whitespace-pre-wrap leading-relaxed">
-            {problem.description || "No description provided."}
-          </p>
+        <div className="mb-10">
+          <MarkdownViewer content={problem.description || "No description provided."} />
         </div>
 
         {problem.tags && problem.tags.length > 0 && (

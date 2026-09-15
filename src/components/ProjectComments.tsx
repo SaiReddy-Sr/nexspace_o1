@@ -155,12 +155,12 @@ export default function ProjectComments({ projectId, comments, currentUser }: Pr
               
               <div className="flex-1">
                 <div className="bg-card p-4 rounded-xl border border-border">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <Link href={`/profile/${comment.profiles?.username}`} className="font-bold text-foreground hover:text-accent transition-colors">
+                  <div className="flex justify-between items-start mb-2 gap-2 flex-wrap">
+                    <div className="min-w-0">
+                      <Link href={`/profile/${comment.profiles?.username}`} className="font-bold text-foreground hover:text-accent transition-colors break-words">
                         @{comment.profiles?.username}
                       </Link>
-                      <span className="text-xs text-foreground/40 ml-3 font-mono">
+                      <span className="text-xs text-foreground/40 ml-3 font-mono whitespace-nowrap">
                         {new Date(comment.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                     </div>

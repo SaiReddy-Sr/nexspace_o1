@@ -41,6 +41,13 @@ export default function ProjectMediaUploader({ onUploadComplete }: ProjectMediaU
     }
 
     if (isImage) {
+      // Validate image size <= 10MB before compression
+      const maxImageSizeInBytes = 10 * 1024 * 1024
+      if (file.size > maxImageSizeInBytes) {
+        setError('Image file is too large. Maximum size is 10MB.')
+        return
+      }
+
       setIsCompressing(true)
       try {
         const options = {
@@ -101,35 +108,44 @@ export default function ProjectMediaUploader({ onUploadComplete }: ProjectMediaU
   }
 
   return (
-    <div className="w-full max-w-sm">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        Upload Media (Image or Video)
-      </label>
-      <input
-        type="file"
-        accept="image/*,video/*"
-        onChange={handleFileChange}
-        disabled={isCompressing || isUploading}
-        className="block w-full text-sm text-gray-500 dark:text-gray-400
-          file:mr-4 file:py-2 file:px-4
-          file:rounded-md file:border-0
-          file:text-sm file:font-semibold
-          file:bg-blue-50 file:text-blue-700
-          hover:file:bg-blue-100
-          dark:file:bg-gray-800 dark:file:text-gray-200
-          disabled:opacity-50 disabled:cursor-not-allowed"
-      />
-      
-      {(isCompressing || isUploading) && (
-        <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
-          {isCompressing ? 'Compressing...' : 'Uploading...'}
+    <div className="w-full">
+      <div className="mb-4">
+        <label className="block text-sm font-bold text-foreground/90 mb-1">
+          Upload Project Media
+        </label>
+        <p className="text-xs text-foreground/60">
+          Supported: Images (up to 10MB, auto-optimized) or Video (max 8MB).
         </p>
-      )}
+      </div>
 
+      <div className="relative group">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/50 to-accent/20 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+        <div className="relative bg-background border border-border rounded-xl p-4 sm:p-6 text-center hover:border-accent/50 transition-colors">
+          <input
+            type="file"
+            accept="image/*,video/*"
+            onChange={handleFileChange}
+            disabled={isCompressing || isUploading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
+          />
+          <div className="flex flex-col items-center justify-center pointer-events-none">
+            <svg className="w-10 h-10 text-foreground/40 mb-3 group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <span className="text-sm font-medium text-foreground/80 group-hover:text-accent transition-colors">
+              {isCompressing ? 'Compressing Image...' : isUploading ? 'Uploading Media...' : 'Click or drag file to upload'}
+            </span>
+          </div>
+        </div>
+      </div>
+      
       {error && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-          {error}
-        </p>
+        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
+          <svg className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p className="text-sm font-medium text-red-500">{error}</p>
+        </div>
       )}
     </div>
   )

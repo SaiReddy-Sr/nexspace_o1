@@ -2,11 +2,14 @@ import { createClient } from '@/lib/supabase/server'
 import ProblemFeed from '@/components/ProblemFeed'
 import Link from 'next/link'
 
-export default async function RequestsPage() {
+export default async function RequestsPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
+  const initialTag = searchParams?.tag as string | undefined;
+
   const supabase = await createClient()
 
   // Initial fetch for SSR
-  const { data: initialProblems, error } = await supabase
+  let query = supabase
     .from('problems')
     .select(`
       *,
@@ -18,6 +21,12 @@ export default async function RequestsPage() {
     .eq('status', 'open')
     .order('created_at', { ascending: false })
     .range(0, 9)
+
+  if (initialTag) {
+    query = query.contains('tags', [initialTag])
+  }
+
+  const { data: initialProblems, error } = await query
 
   if (error) {
     console.error('Error fetching initial problems:', error)
@@ -61,7 +70,24 @@ export default async function RequestsPage() {
           )}
         </div>
 
-        <ProblemFeed initialProblems={initialProblems || []} />
+        <div className="mb-8 border-b border-border">
+          <nav className="-mb-px flex space-x-8">
+            <Link
+              href="/requests"
+              className="border-accent text-accent whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              Open Requests
+            </Link>
+            <Link
+              href="/requests/closed"
+              className="border-transparent text-foreground/50 hover:text-foreground hover:border-border whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+            >
+              Closed Requests
+            </Link>
+          </nav>
+        </div>
+
+        <ProblemFeed initialProblems={initialProblems || []} initialTag={initialTag} />
       </main>
     </div>
   )

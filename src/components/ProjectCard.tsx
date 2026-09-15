@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import UpvoteButton from './UpvoteButton'
+import LinkPreview from './LinkPreview'
 
 interface Profile {
   username: string
@@ -64,6 +65,8 @@ export default function ProjectCard({ project, isOwner, hasVoted = false, isLogg
                 loading="lazy"
               />
             )
+          ) : project.live_url ? (
+            <LinkPreview url={project.live_url} displayMode="thumbnail" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center p-6 text-center">
               <span className="text-white/60 font-semibold text-lg line-clamp-2">{project.title}</span>

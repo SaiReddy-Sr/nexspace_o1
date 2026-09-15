@@ -41,9 +41,14 @@ export default function ProblemForm() {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-foreground">
-            Description
-          </label>
+          <div className="flex justify-between items-end mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-foreground">
+              Description
+            </label>
+            <span className="text-xs text-foreground/50 font-mono">
+              Markdown & Loom/YouTube links supported
+            </span>
+          </div>
           <textarea
             id="description"
             name="description"

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { HeaderSearchInput, HeaderClientMenu } from './HeaderClientItems'
+import { HeaderSearchInput, HeaderClientMenu, HeaderLogo } from './HeaderClientItems'
 import { HeaderHamburger } from './HeaderHamburger'
 
 export default async function Header() {
@@ -44,15 +44,7 @@ export default async function Header() {
       {/* Left: Hamburger & Logo */}
       <div className="flex items-center gap-4">
         <HeaderHamburger />
-        <Link href="/" className="flex items-center gap-1.5 group">
-          <div className="flex items-center justify-center w-7 h-7 text-accent font-black">
-            {/* Custom N logo svg approximation based on image */}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-full h-full"><path d="M4 19L11 5L15 15L20 5" strokeLinejoin="round" strokeLinecap="round"/><circle cx="5" cy="18" r="1.5" fill="currentColor"/><circle cx="11" cy="6" r="1.5" fill="currentColor"/></svg>
-          </div>
-          <span className="font-bold text-xl tracking-tight hidden sm:block text-foreground">
-            NexSpace
-          </span>
-        </Link>
+        <HeaderLogo />
       </div>
 
       {/* Center: Search */}
@@ -61,7 +53,7 @@ export default async function Header() {
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Link 
           href={createLink}
           className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 text-sm font-medium bg-white/5 hover:bg-white/10 text-white rounded-full border border-white/10 transition-colors"
@@ -71,6 +63,16 @@ export default async function Header() {
           </span>
           Create
         </Link>
+        
+        {/* Mobile Create Button (+) */}
+        {user && (
+          <Link 
+            href={createLink}
+            className="sm:hidden flex items-center justify-center w-8 h-8 rounded-full bg-accent/20 text-accent hover:bg-accent/30 transition-colors mr-1"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </Link>
+        )}
 
         <HeaderClientMenu user={user} username={username} avatarUrl={avatar_url} />
       </div>

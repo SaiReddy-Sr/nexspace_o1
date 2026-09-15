@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Tables } from '@/types/supabase'
 import { sendMessage, blockUser, reportUser } from '@/app/dashboard/messages/actions'
+import { createPortal } from 'react-dom'
 
 interface ChatDrawerProps {
   conversationId: string
@@ -28,12 +29,17 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
   const [reportSubmitting, setReportSubmitting] = useState(false)
   const [reportSuccess, setReportSuccess] = useState(false)
   const [blocking, setBlocking] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     scrollToBottom()
@@ -131,6 +137,15 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
     if (result.error) {
       setError(result.error)
       setNewMessage(content)
+    } else if (result.success && result.message) {
+      // Append the newly created message to local state immediately.
+      // If Realtime eventually fires, the deduplication logic will ignore it.
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === result.message.id)) {
+          return prev
+        }
+        return [...prev, result.message]
+      })
     }
   }
 
@@ -178,9 +193,16 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
     }
   }
 
-  return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-card shadow-2xl border-l border-border flex flex-col transition-transform duration-300 ease-in-out">
-      {/* Header */}
+  if (!mounted) return null
+
+  return createPortal(
+    <>
+      <div 
+        className="fixed inset-0 bg-black/60 z-[100] transition-opacity"
+        onClick={onClose}
+      />
+      <div className="fixed inset-y-0 right-0 z-[101] w-full sm:w-96 bg-card shadow-2xl border-l border-border flex flex-col transition-transform duration-300 ease-in-out">
+        {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background relative">
         <div className="flex items-center space-x-2">
           <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
@@ -354,6 +376,8 @@ export default function ChatDrawer({ conversationId, currentUserId, onClose, onB
           </svg>
         </button>
       </form>
-    </div>
+      </div>
+    </>,
+    document.body
   )
 }

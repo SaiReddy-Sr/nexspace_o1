@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createProfile, checkUsernameAvailability } from './actions'
-import ImageUploader from '@/components/ImageUploader'
+import dynamic from 'next/dynamic'
+
+const ImageUploader = dynamic(() => import('@/components/ImageUploader'))
 
 export default function OnboardingForm({ role, nextParam }: { role: string; nextParam?: string }) {
   const [loading, setLoading] = useState(false)

@@ -4,6 +4,12 @@ import Link from 'next/link'
 import MessageButton from './MessageButton'
 import UpvoteButton from '@/components/UpvoteButton'
 import ProjectComments from '@/components/ProjectComments'
+import TrackButton from '@/components/TrackButton'
+import LinkPreview from '@/components/LinkPreview'
+import { ShipLogs } from '@/components/ShipLogs'
+import dynamic from 'next/dynamic'
+
+const MarkdownViewer = dynamic(() => import('@/components/MarkdownViewer'))
 
 export default async function ProjectDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -32,7 +38,10 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
   const isOwnProject = isLoggedIn && user.id === project.developer_id
 
   let hasVoted = false
+  let isTracking = false
+
   if (isLoggedIn) {
+    // Check vote
     const { data: vote } = await supabase
       .from('project_votes')
       .select('id')
@@ -40,6 +49,15 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
       .eq('voter_id', user.id)
       .single()
     if (vote) hasVoted = true
+
+    // Check sync
+    const { data: sync } = await supabase
+      .from('profile_syncs')
+      .select('id')
+      .eq('synced_profile_id', project.developer_id)
+      .eq('syncer_id', user.id)
+      .single()
+    if (sync) isTracking = true
   }
 
   // Fetch comments
@@ -56,35 +74,59 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
     .order('created_at', { ascending: false })
 
   if (commentsError) {
-    console.error('Error fetching comments:', commentsError)
+    console.error('Error fetching comments:', JSON.stringify(commentsError, null, 2))
+  }
+
+  // Fetch ship logs (project updates)
+  const { data: updates, error: updatesError } = await supabase
+    .from('project_updates')
+    .select('*')
+    .eq('project_id', project.id)
+    .order('created_at', { ascending: false })
+
+  if (updatesError) {
+    // Silently handle error if the table doesn't exist yet (user hasn't run SQL)
+    // console.error('Error fetching updates:', updatesError)
   }
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-background font-sans pb-24">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
         {/* Top Header / Profile Info */}
         <div className="flex items-center space-x-4 mb-8">
-          <Link href={`/profile/${project.profiles.username}`} className="group flex items-center space-x-4 transition-opacity hover:opacity-80">
-            {project.profiles.avatar_url ? (
-              <img
-                src={project.profiles.avatar_url}
-                alt={project.profiles.username}
-                className="w-12 h-12 rounded-full border border-border shadow-sm object-cover"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-border flex items-center justify-center border border-border shadow-sm">
-                <span className="text-xl font-bold text-foreground/50 uppercase">
-                  {project.profiles.username.charAt(0)}
-                </span>
+          <div className="flex items-center gap-4">
+            <Link href={`/profile/${project.profiles.username}`} className="group flex items-center space-x-4 transition-opacity hover:opacity-80">
+              {project.profiles.avatar_url ? (
+                <img
+                  src={project.profiles.avatar_url}
+                  alt={project.profiles.username}
+                  className="w-12 h-12 rounded-full border border-border shadow-sm object-cover"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-border flex items-center justify-center border border-border shadow-sm">
+                  <span className="text-xl font-bold text-foreground/50 uppercase">
+                    {project.profiles.username.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <div>
+                <p className="text-sm font-medium text-foreground/50 uppercase tracking-widest">Created by</p>
+                <p className="text-lg font-mono font-bold text-foreground group-hover:text-accent transition-colors">
+                  @{project.profiles.username}
+                </p>
+              </div>
+            </Link>
+            
+            {!isOwnProject && (
+              <div className="ml-2">
+                <TrackButton 
+                  targetProfileId={project.developer_id} 
+                  initialIsTracking={isTracking} 
+                  isLoggedIn={isLoggedIn} 
+                />
               </div>
             )}
-            <div>
-              <p className="text-sm font-medium text-foreground/50 uppercase tracking-widest">Created by</p>
-              <p className="text-lg font-mono font-bold text-foreground group-hover:text-accent transition-colors">
-                @{project.profiles.username}
-              </p>
-            </div>
-          </Link>
+          </div>
         </div>
 
         {/* Title and Action */}
@@ -149,9 +191,16 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
             {project.description && (
               <section>
                 <h2 className="text-2xl font-bold text-foreground mb-6 tracking-tight">About the Project</h2>
-                <div className="prose prose-invert max-w-none text-foreground/80 whitespace-pre-wrap leading-relaxed">
-                  {project.description}
+                <div className="mt-4">
+                  <MarkdownViewer content={project.description} />
                 </div>
+              </section>
+            )}
+
+            {project.live_url && (
+              <section className="mt-12">
+                <h3 className="text-xl font-bold text-foreground mb-4 tracking-tight">Live Project</h3>
+                <LinkPreview url={project.live_url} displayMode="card" />
               </section>
             )}
           </div>
@@ -162,12 +211,13 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
                 <h3 className="text-lg font-bold text-foreground mb-5 tracking-tight">Tech Stack</h3>
                 <div className="flex flex-wrap gap-2">
                   {project.tech_tags.map((tag: string, index: number) => (
-                    <span
+                    <Link
+                      href={`/?tag=${encodeURIComponent(tag)}`}
                       key={index}
-                      className="inline-flex items-center px-3 py-1.5 rounded-[4px] text-[11px] font-mono font-bold bg-accent/10 text-accent uppercase tracking-wider"
+                      className="inline-flex items-center px-3 py-1.5 rounded-[4px] text-[11px] font-mono font-bold bg-accent/10 text-accent uppercase tracking-wider hover:bg-accent hover:text-white transition-colors"
                     >
                       {tag}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               </section>
@@ -187,6 +237,13 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
             </section>
           </div>
         </div>
+
+        {/* Ship Logs / Updates */}
+        <ShipLogs 
+          projectId={project.id} 
+          isOwnProject={isOwnProject} 
+          initialLogs={updates || []} 
+        />
 
         {/* Comments Section */}
         <ProjectComments 

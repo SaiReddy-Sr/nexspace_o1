@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import ImageUploader from './ImageUploader'
+import dynamic from 'next/dynamic'
+
+const ImageUploader = dynamic(() => import('./ImageUploader'))
 
 interface Profile {
   id: string

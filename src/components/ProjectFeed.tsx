@@ -6,6 +6,7 @@ import ProjectCard from './ProjectCard'
 import Link from 'next/link'
 import { useSearch } from '@/lib/SearchContext'
 import SpotlightCard from './SpotlightCard'
+import { useRouter } from 'next/navigation'
 
 interface Profile {
   username: string
@@ -33,9 +34,10 @@ interface ProjectFeedProps {
   role?: string | null
   initialUserVotes?: string[]
   topRankedProjects?: any[]
+  initialTag?: string
 }
 
-export default function ProjectFeed({ initialProjects, user, role, initialUserVotes = [], topRankedProjects = [] }: ProjectFeedProps) {
+export default function ProjectFeed({ initialProjects, user, role, initialUserVotes = [], topRankedProjects = [], initialTag }: ProjectFeedProps) {
   const [projects, setProjects] = useState<Project[]>(initialProjects as Project[])
   const [userVotes, setUserVotes] = useState<Set<string>>(new Set(initialUserVotes))
   const [page, setPage] = useState(1)
@@ -43,7 +45,8 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
   const [hasMore, setHasMore] = useState(initialProjects.length === 10)
   
   // Filtering state
-  const [activeTag, setActiveTag] = useState<string | null>(null)
+  const router = useRouter()
+  const activeTag = initialTag || null
   const { searchQuery } = useSearch()
   
   // Filter logic
@@ -76,7 +79,7 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
     const from = page * 10
     const to = from + 9
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('projects')
       .select(`
         *,
@@ -88,6 +91,12 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
       .order('featured_position', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false })
       .range(from, to)
+
+    if (activeTag) {
+      query = query.contains('tech_tags', [activeTag])
+    }
+
+    const { data, error } = await query
 
     if (error) {
       console.error('Error fetching projects:', error.message)
@@ -203,7 +212,7 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
         <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 mb-6 bg-[#0f0f0f]/95 backdrop-blur-md">
           <div className="flex overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-3 items-center">
             <button
-              onClick={() => setActiveTag(null)}
+              onClick={() => router.push('/')}
               className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                 !activeTag 
                   ? 'bg-white text-black border-transparent' 
@@ -215,7 +224,7 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
             {tagCounts.map(([tag, count]) => (
               <button
                 key={tag}
-                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                onClick={() => router.push(`/?tag=${encodeURIComponent(tag)}`)}
                 className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                   activeTag === tag
                     ? 'bg-white text-black border-transparent'
@@ -243,7 +252,7 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
               />
             )}
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-3">
               {feedProjects.map((project) => (
                 <ProjectCard 
                   key={project.id} 
