@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - phase-15.6-visual-density-pass
+  workflow_dispatch:
 
 jobs:
   deploy:

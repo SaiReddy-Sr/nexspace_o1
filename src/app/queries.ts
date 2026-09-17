@@ -1,9 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { unstable_cache } from 'next/cache'
 
 export const getTopRankedProjects = unstable_cache(
   async () => {
-    const supabase = await createClient()
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     const { data, error } = await supabase
       .from('projects')
       .select(`

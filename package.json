@@ -5,6 +5,13 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "unrs-resolver",
+      "workerd"
+    ]
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
