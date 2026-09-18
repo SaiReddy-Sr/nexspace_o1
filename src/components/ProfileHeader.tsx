@@ -21,20 +21,7 @@ export default function ProfileHeader({ profile, isOwner, stats, isTracking = fa
 
   const handleShare = async () => {
     const url = window.location.href
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${profile.full_name || profile.username}'s Profile on NexSpace`,
-          url: url
-        })
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          copyToClipboard(url)
-        }
-      }
-    } else {
-      copyToClipboard(url)
-    }
+    copyToClipboard(url)
   }
 
   const copyToClipboard = (text: string) => {
@@ -142,10 +129,11 @@ export default function ProfileHeader({ profile, isOwner, stats, isTracking = fa
           <div className="hidden sm:flex items-center gap-3">
             <button 
               onClick={handleShare}
-              className="p-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-colors shadow-sm"
-              title="Public URL"
+              className="px-5 py-2.5 rounded-full border border-white/20 bg-[#1E1E2E] hover:bg-white/10 text-sm font-bold text-white transition-colors shadow-sm flex items-center gap-2"
+              title="Copy Public URL"
             >
-              {copied ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
+              {copied ? <Check className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4" />}
+              <span>{copied ? 'Copied!' : 'Public URL'}</span>
             </button>
             
             {isOwner ? (
