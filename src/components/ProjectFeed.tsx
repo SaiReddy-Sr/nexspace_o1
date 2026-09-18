@@ -213,7 +213,7 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
       {/* Left Column: Feed */}
       <div className="flex-1 min-w-0">
         {/* Sticky filter bar */}
-        <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 mb-6 bg-[#0f0f0f]/95 backdrop-blur-md">
+        <div className="sticky top-16 sm:top-[72px] z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-1 sm:py-2 mb-4 sm:mb-6 bg-[#0f0f0f]/95 backdrop-blur-md">
           <div className="flex overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-3 items-center">
             <button
               onClick={() => router.push('/')}
