@@ -30,12 +30,6 @@ export async function GET(request: Request) {
     const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content')
     let image = $('meta[property="og:image"]').attr('content')
     
-    // Extract favicon/logo
-    let logo = $('link[rel="apple-touch-icon"]').attr('href') || 
-               $('link[rel="icon"]').attr('href') || 
-               $('link[rel="shortcut icon"]').attr('href') ||
-               '/favicon.ico'
-
     // Handle relative URLs
     const urlObj = new URL(url)
     const baseUrl = `${urlObj.protocol}//${urlObj.host}`
@@ -44,15 +38,10 @@ export async function GET(request: Request) {
       image = `${baseUrl}${image.startsWith('/') ? '' : '/'}${image}`
     }
     
-    if (logo && !logo.startsWith('http')) {
-      logo = `${baseUrl}${logo.startsWith('/') ? '' : '/'}${logo}`
-    }
-
     return NextResponse.json({
       title: title || '',
       description: description || '',
-      image: image || '',
-      logo: logo || ''
+      image: image || ''
     })
   } catch (error) {
     console.error('Error fetching OG data:', error)
