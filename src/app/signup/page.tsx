@@ -1,58 +1,59 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { signupWithPassword, signupWithMagicLink } from './actions'
+import { signupWithPassword, signupWithOtp, verifyOtp } from './actions'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-function getMailProviderUrl(email: string) {
-  const domain = email.split('@')[1]?.toLowerCase()
-  if (!domain) return null
-  
-  if (domain === 'gmail.com') return 'https://mail.google.com/'
-  if (domain === 'outlook.com' || domain === 'hotmail.com' || domain === 'live.com') return 'https://outlook.live.com/'
-  if (domain === 'yahoo.com') return 'https://mail.yahoo.com/'
-  if (domain === 'proton.me' || domain === 'protonmail.com') return 'https://mail.proton.me/'
-  if (domain === 'icloud.com' || domain === 'me.com' || domain === 'mac.com') return 'https://www.icloud.com/mail'
-  
-  return null
-}
-
 function SignupForm() {
   const [role, setRole] = useState<'developer' | 'client'>('developer')
-  const [method, setMethod] = useState<'password' | 'magic_link'>('password')
+  const [method, setMethod] = useState<'password' | 'otp'>('password')
   
   const searchParams = useSearchParams()
   const nextParam = searchParams.get('next') || undefined
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
   const [submittedEmail, setSubmittedEmail] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setMessage('')
-    setSubmittedEmail('')
-    const email = formData.get('email') as string
+    setError('')
     
     if (method === 'password') {
+      const email = formData.get('email') as string
       const password = formData.get('password') as string
-      const { error } = await signupWithPassword(email, password, role, nextParam)
-      if (error) {
-        setMessage(error)
+      const { error: signupError } = await signupWithPassword(email, password, role, nextParam)
+      if (signupError) {
+        setError(signupError)
       } else {
         setMessage('Check your email to confirm your account.')
         setSubmittedEmail(email)
       }
+      setLoading(false)
     } else {
-      const { error } = await signupWithMagicLink(email, role, nextParam)
-      if (error) {
-        setMessage(error)
+      if (!otpSent) {
+        const email = formData.get('email') as string
+        const { error: otpError } = await signupWithOtp(email, role)
+        if (otpError) {
+          setError(otpError)
+        } else {
+          setMessage('Check your email for the OTP code.')
+          setSubmittedEmail(email)
+          setOtpSent(true)
+        }
+        setLoading(false)
       } else {
-        setMessage('Check your email for the magic link.')
-        setSubmittedEmail(email)
+        const token = formData.get('otp') as string
+        const { error: verifyError } = await verifyOtp(submittedEmail, token, role, nextParam)
+        if (verifyError) {
+          setError(verifyError)
+        }
+        setLoading(false)
       }
     }
-    setLoading(false)
   }
 
   return (
@@ -90,49 +91,58 @@ function SignupForm() {
             </button>
           </div>
 
-          <div className="flex justify-center space-x-4 border-b border-border pb-4">
-            <button
-              type="button"
-              onClick={() => setMethod('password')}
-              className={`text-sm font-medium transition-colors ${
-                method === 'password'
-                  ? 'text-accent'
-                  : 'text-foreground/50 hover:text-foreground'
-              }`}
-            >
-              Sign up with password
-            </button>
-            <button
-              type="button"
-              onClick={() => setMethod('magic_link')}
-              className={`text-sm font-medium transition-colors ${
-                method === 'magic_link'
-                  ? 'text-accent'
-                  : 'text-foreground/50 hover:text-foreground'
-              }`}
-            >
-              Sign up with magic link
-            </button>
-          </div>
+          {!otpSent && (
+            <div className="flex justify-center space-x-4 border-b border-border pb-4">
+              <button
+                type="button"
+                onClick={() => setMethod('password')}
+                className={`text-sm font-medium transition-colors ${
+                  method === 'password'
+                    ? 'text-accent'
+                    : 'text-foreground/50 hover:text-foreground'
+                }`}
+              >
+                Sign up with password
+              </button>
+              <button
+                type="button"
+                onClick={() => setMethod('otp')}
+                className={`text-sm font-medium transition-colors ${
+                  method === 'otp'
+                    ? 'text-accent'
+                    : 'text-foreground/50 hover:text-foreground'
+                }`}
+              >
+                Sign up with OTP
+              </button>
+            </div>
+          )}
         </div>
 
         <form action={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
-                placeholder="Email address"
-              />
-            </div>
-            {method === 'password' && (
+            {!otpSent ? (
+              <div>
+                <label htmlFor="email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors"
+                  placeholder="Email address"
+                />
+              </div>
+            ) : (
+              <div className="text-center text-sm text-foreground/80 mb-4">
+                Code sent to <span className="font-semibold">{submittedEmail}</span>
+              </div>
+            )}
+            
+            {method === 'password' && !otpSent && (
               <div className="pt-2">
                 <label htmlFor="password" className="sr-only">
                   Password
@@ -148,25 +158,35 @@ function SignupForm() {
                 />
               </div>
             )}
+
+            {method === 'otp' && otpSent && (
+              <div className="pt-2">
+                <label htmlFor="otp" className="sr-only">
+                  6-digit OTP Code
+                </label>
+                <input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  autoComplete="one-time-code"
+                  required
+                  pattern="\d{6}"
+                  maxLength={6}
+                  className="relative block w-full appearance-none rounded-md border border-border px-3 py-2 text-foreground placeholder-foreground/50 focus:z-10 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:text-sm bg-background transition-colors text-center tracking-widest text-lg font-mono"
+                  placeholder="------"
+                />
+              </div>
+            )}
           </div>
 
-          {message && (
+          {error && (
+            <div className="text-sm text-center text-red-500 font-medium">
+              {error}
+            </div>
+          )}
+          {message && !error && (
             <div className="text-sm text-center text-accent font-medium">
-              {submittedEmail && getMailProviderUrl(submittedEmail) && !message.toLowerCase().includes('failed') ? (
-                <a 
-                  href={getMailProviderUrl(submittedEmail)!} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:underline underline-offset-2 flex items-center justify-center gap-1"
-                >
-                  {message}
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              ) : (
-                message
-              )}
+              {message}
             </div>
           )}
 
@@ -176,12 +196,21 @@ function SignupForm() {
               disabled={loading}
               className="group relative flex w-full justify-center rounded-md bg-accent py-2.5 px-4 text-sm font-bold text-white hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background shadow-sm disabled:opacity-50"
             >
-              {loading ? 'Processing...' : method === 'password' ? 'Sign up with Password' : 'Send Magic Link'}
+              {loading ? 'Processing...' : method === 'password' ? 'Sign up with Password' : otpSent ? 'Verify Code' : 'Send OTP Code'}
             </button>
           </div>
         </form>
 
-        <div className="text-center text-sm pt-2">
+        <div className="text-center text-sm space-y-4 flex flex-col pt-2">
+          {otpSent && (
+            <button
+              type="button"
+              onClick={() => { setOtpSent(false); setMessage(''); setError(''); }}
+              className="font-medium text-foreground/50 hover:text-foreground transition-colors"
+            >
+              Back to email entry
+            </button>
+          )}
           <Link href="/login" className="font-medium text-accent hover:text-accent-hover transition-colors">
             Already have an account? Log in
           </Link>

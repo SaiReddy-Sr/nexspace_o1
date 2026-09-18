@@ -19,14 +19,13 @@ export async function loginWithPassword(email: string, password: string): Promis
   redirect('/onboarding')
 }
 
-export async function loginWithMagicLink(email: string): Promise<{ error?: string, success?: boolean }> {
+export async function loginWithOtp(email: string): Promise<{ error?: string, success?: boolean }> {
   const supabase = await createClient()
-  const origin = (await headers()).get('origin')
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/callback?next=/onboarding`,
+      shouldCreateUser: false, // Ensure login doesn't accidentally sign up users
     },
   })
 
@@ -35,4 +34,20 @@ export async function loginWithMagicLink(email: string): Promise<{ error?: strin
   }
 
   return { success: true }
+}
+
+export async function verifyOtp(email: string, token: string): Promise<{ error?: string }> {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'email',
+  })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  redirect('/onboarding')
 }
