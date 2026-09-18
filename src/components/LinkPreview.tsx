@@ -57,8 +57,8 @@ export default function LinkPreview({ url, displayMode = 'card' }: { url: string
         ) : (
           <div className="flex-1 w-full bg-[#161622] flex flex-col items-center justify-center border-b border-white/5 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent opacity-50" />
-            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-              <img src="/nxs_logo.png" alt="NexSpace" className="w-8 h-8 object-contain opacity-60 grayscale" />
+            <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+              <img src="/nxs_logo.png" alt="NexSpace" className="w-12 h-12 object-contain opacity-60 grayscale" />
             </div>
           </div>
         )}
