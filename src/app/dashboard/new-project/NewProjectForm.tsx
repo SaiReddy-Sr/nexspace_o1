@@ -96,13 +96,12 @@ export default function NewProjectForm() {
           
           <div>
             <label htmlFor="live_url" className="block text-sm font-bold text-foreground/90">
-              Live URL <span className="text-accent">*</span>
+              Live URL <span className="text-foreground/50 font-normal ml-1">(Optional)</span>
             </label>
             <input
               id="live_url"
               name="live_url"
               type="url"
-              required
               value={liveUrl}
               onChange={(e) => setLiveUrl(e.target.value)}
               className="mt-2 block w-full rounded-xl border border-border px-4 py-3 bg-background focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
@@ -117,7 +116,7 @@ export default function NewProjectForm() {
 
           <div>
             <label htmlFor="github_repo_url" className="block text-sm font-bold text-foreground/90">
-              GitHub Repo URL
+              GitHub Repo URL <span className="text-foreground/50 font-normal ml-1">(Optional)</span>
             </label>
             <div className="flex gap-2 mt-2">
               <input

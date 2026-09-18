@@ -28,15 +28,17 @@ export async function createProject(formData: FormData, mediaUrl?: string, media
   const liveUrl = formData.get('live_url') as string
   const githubRepoUrl = formData.get('github_repo_url') as string
 
-  if (!title || !liveUrl) {
-    return { error: 'Title and Live URL are required.' }
+  if (!title) {
+    return { error: 'Title is required.' }
   }
 
   // Basic URL validation
-  try {
-    new URL(liveUrl)
-  } catch (err) {
-    return { error: 'Live URL must be a valid URL (e.g. https://example.com)' }
+  if (liveUrl) {
+    try {
+      new URL(liveUrl)
+    } catch (err) {
+      return { error: 'Live URL must be a valid URL (e.g. https://example.com)' }
+    }
   }
 
   const techTags = techTagsStr
