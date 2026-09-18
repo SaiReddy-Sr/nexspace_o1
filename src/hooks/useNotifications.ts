@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export type NotificationType = 'upvote' | 'comment' | 'track' | 'update' | 'message'
+type NotificationType = 'upvote' | 'comment' | 'track' | 'update' | 'message'
 
 export interface Notification {
   id: string
