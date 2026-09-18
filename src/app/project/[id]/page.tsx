@@ -203,6 +203,13 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
                 <LinkPreview url={project.live_url} displayMode="card" />
               </section>
             )}
+
+            {/* Ship Logs / Updates */}
+            <ShipLogs 
+              projectId={project.id} 
+              isOwnProject={isOwnProject} 
+              initialLogs={updates || []} 
+            />
           </div>
           
           <div className="space-y-8">
@@ -235,22 +242,15 @@ export default async function ProjectDetailPage(props: { params: Promise<{ id: s
                 })}
               </p>
             </section>
+
+            {/* Comments Section */}
+            <ProjectComments 
+              projectId={project.id} 
+              comments={comments || []} 
+              currentUser={user} 
+            />
           </div>
         </div>
-
-        {/* Ship Logs / Updates */}
-        <ShipLogs 
-          projectId={project.id} 
-          isOwnProject={isOwnProject} 
-          initialLogs={updates || []} 
-        />
-
-        {/* Comments Section */}
-        <ProjectComments 
-          projectId={project.id} 
-          comments={comments || []} 
-          currentUser={user} 
-        />
       </div>
     </div>
   )
