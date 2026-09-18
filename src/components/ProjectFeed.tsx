@@ -44,7 +44,6 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(initialProjects.length === 10)
-  const [isMobileSearchFocused, setIsMobileSearchFocused] = useState(false)
   
   // Filtering state
   const router = useRouter()
@@ -215,26 +214,6 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
       <div className="flex-1 min-w-0">
         {/* Sticky filter bar */}
         <div className="sticky top-0 sm:top-4 z-40 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 mb-6 bg-[#0f0f0f]/95 backdrop-blur-md">
-          {/* Mobile Search Bar */}
-          <div className="sm:hidden relative w-full mb-3 mt-1">
-            <input 
-              id="mobile-search-input"
-              type="text" 
-              placeholder="Search NexSpace..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsMobileSearchFocused(true)}
-              onBlur={() => setIsMobileSearchFocused(false)}
-              className="w-full bg-[#121212] border border-white/10 rounded-full py-2 px-4 pl-10 text-[15px] text-white placeholder-white/40 focus:outline-none focus:border-accent transition-all shadow-inner"
-            />
-            <svg className="w-[18px] h-[18px] text-white/70 absolute left-3 top-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <UserSearchSuggestions 
-              query={searchQuery} 
-              isFocused={isMobileSearchFocused} 
-              onClose={() => setIsMobileSearchFocused(false)} 
-            />
-          </div>
-          
           <div className="flex overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-3 items-center">
             <button
               onClick={() => router.push('/')}

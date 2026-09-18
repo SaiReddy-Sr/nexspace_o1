@@ -5,21 +5,33 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Search, User, LogIn } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useSearch } from '@/lib/SearchContext'
 
 export function ClientSearchIcon({ isExpanded }: { isExpanded: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
+  const { setIsMobileSearchOpen } = useSearch()
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    if (pathname === '/') {
-      const input = document.getElementById('global-search-input') || document.getElementById('mobile-search-input')
-      if (input) {
-        input.focus()
-        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    
+    // On mobile screens, clicking this opens the global overlay instantly.
+    // On desktop, it focuses the desktop search bar.
+    if (window.innerWidth < 640) {
+      setIsMobileSearchOpen(true)
+      if (pathname !== '/') {
+        router.push('/')
       }
     } else {
-      router.push('/?focus=search')
+      if (pathname === '/') {
+        const input = document.getElementById('global-search-input')
+        if (input) {
+          input.focus()
+          input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      } else {
+        router.push('/?focus=search')
+      }
     }
   }
 
