@@ -107,23 +107,6 @@ export default function NewProjectForm() {
               className="mt-2 block w-full rounded-xl border border-border px-4 py-3 bg-background focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
               placeholder="https://awesome-app.com"
             />
-            {liveUrl && (
-              <div className="mt-4">
-                <LinkPreview url={liveUrl} displayMode="card" />
-              </div>
-            )}
-            <div className="mt-4 flex items-center">
-              <input
-                id="show_link_preview"
-                name="show_link_preview"
-                type="checkbox"
-                defaultChecked
-                className="w-4 h-4 text-accent bg-background border-border rounded focus:ring-accent focus:ring-2"
-              />
-              <label htmlFor="show_link_preview" className="ml-2 text-sm font-medium text-foreground/90">
-                Generate Link Preview if no media is provided
-              </label>
-            </div>
           </div>
 
           <div>
@@ -179,6 +162,27 @@ export default function NewProjectForm() {
               </div>
             </div>
           )}
+
+          {/* Link Preview Settings */}
+          <div className="bg-background/50 rounded-2xl p-4 border border-border/50">
+            <div className="flex items-center">
+              <input
+                id="show_link_preview"
+                name="show_link_preview"
+                type="checkbox"
+                defaultChecked
+                className="w-4 h-4 text-accent bg-background border-border rounded focus:ring-accent focus:ring-2"
+              />
+              <label htmlFor="show_link_preview" className="ml-2 text-sm font-bold text-foreground/90">
+                Generate Link Preview if no media is provided
+              </label>
+            </div>
+            {liveUrl && (
+              <div className="mt-4">
+                <LinkPreview url={liveUrl} displayMode="card" />
+              </div>
+            )}
+          </div>
 
           <div>
             <div className="flex justify-between items-end mb-2">
