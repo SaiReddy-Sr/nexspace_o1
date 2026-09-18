@@ -38,14 +38,16 @@ export async function updateProject(projectId: string, formData: FormData, media
   const liveUrl = formData.get('live_url') as string
   const githubRepoUrl = formData.get('github_repo_url') as string
 
-  if (!title || !liveUrl) {
-    return { error: 'Title and Live URL are required.' }
+  if (!title) {
+    return { error: 'Title is required.' }
   }
 
-  try {
-    new URL(liveUrl)
-  } catch (err) {
-    return { error: 'Live URL must be a valid URL' }
+  if (liveUrl) {
+    try {
+      new URL(liveUrl)
+    } catch (err) {
+      return { error: 'Live URL must be a valid URL' }
+    }
   }
 
   const techTags = techTagsStr
@@ -58,7 +60,7 @@ export async function updateProject(projectId: string, formData: FormData, media
       title,
       description: description || null,
       tech_tags: techTags,
-      live_url: liveUrl,
+      live_url: liveUrl || null,
       github_repo_url: githubRepoUrl || null,
       media_url: mediaUrl || null,
       media_type: mediaType || 'image',
@@ -71,4 +73,31 @@ export async function updateProject(projectId: string, formData: FormData, media
   }
 
   redirect(`/profile/${profile.username}`)
+}
+
+export async function deleteProject(projectId: string) {
+  const supabase = await createClient()
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    return { error: 'Not authenticated' }
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .single()
+
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', projectId)
+    .eq('developer_id', user.id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  redirect(`/profile/${profile?.username}`)
 }

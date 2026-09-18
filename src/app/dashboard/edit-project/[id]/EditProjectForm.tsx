@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import ProjectMediaUploader from '@/components/ProjectMediaUploader'
-import { updateProject } from './actions'
+import { updateProject, deleteProject } from './actions'
 import TagInput from '@/components/TagInput'
 import LinkPreview from '@/components/LinkPreview'
 import dynamic from 'next/dynamic'
@@ -97,13 +97,12 @@ export default function EditProjectForm({ project }: { project: any }) {
           
           <div>
             <label htmlFor="live_url" className="block text-sm font-bold text-foreground/90">
-              Live URL <span className="text-accent">*</span>
+              Live URL <span className="text-foreground/50 font-normal ml-1">(Optional)</span>
             </label>
             <input
               id="live_url"
               name="live_url"
               type="url"
-              required
               value={liveUrl}
               onChange={(e) => setLiveUrl(e.target.value)}
               className="mt-2 block w-full rounded-xl border border-border px-4 py-3 bg-background focus:border-accent focus:ring-1 focus:ring-accent transition-all shadow-sm"
@@ -162,8 +161,17 @@ export default function EditProjectForm({ project }: { project: any }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <div>
-                  <h4 className="text-base font-bold text-accent">Current Media ({mediaType})</h4>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-base font-bold text-accent">Current Media ({mediaType})</h4>
+                    <button 
+                      type="button" 
+                      onClick={() => { setMediaUrl(undefined); setMediaType(undefined); }}
+                      className="text-xs font-bold text-red-400 hover:text-red-300 transition-colors px-2 py-1 bg-red-500/10 rounded-md"
+                    >
+                      Remove
+                    </button>
+                  </div>
                   <p className="text-sm text-foreground/70 mt-1 leading-relaxed">
                     This is what is currently uploaded for your project.
                   </p>
@@ -214,7 +222,24 @@ export default function EditProjectForm({ project }: { project: any }) {
         </div>
       )}
 
-      <div className="pt-8 mt-8 border-t border-border flex justify-end">
+      <div className="pt-8 mt-8 border-t border-border flex justify-between items-center">
+        <button
+          type="button"
+          onClick={async () => {
+            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+              setLoading(true)
+              const { error } = await deleteProject(project.id)
+              if (error) {
+                setError(error)
+                setLoading(false)
+              }
+            }
+          }}
+          disabled={loading || isUploadingMedia}
+          className="text-sm font-bold text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
+        >
+          Delete Project
+        </button>
         <button
           type="submit"
           disabled={loading || isUploadingMedia}
