@@ -61,15 +61,15 @@ export default function ProjectComments({ projectId, comments, currentUser }: Pr
   }
 
   return (
-    <div className="mt-16 border-t border-border pt-12">
-      <div className="flex items-center gap-3 mb-8">
+    <div className="mt-8 pt-2">
+      <div className="flex items-center gap-3 mb-6">
         <MessageSquare className="w-6 h-6 text-foreground" />
         <h2 className="text-2xl font-bold text-foreground tracking-tight">Reviews & Comments</h2>
       </div>
 
       {/* Comment Form */}
       {currentUser ? (
-        <form onSubmit={handleSubmit} className="mb-12 bg-card p-6 rounded-xl border border-border shadow-sm">
+        <form onSubmit={handleSubmit} className="mb-10 bg-card p-5 rounded-xl border border-border shadow-sm">
           <div className="flex flex-col sm:flex-row gap-4 sm:items-start mb-4">
             {/* Avatar */}
             <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -80,9 +80,9 @@ export default function ProjectComments({ projectId, comments, currentUser }: Pr
               )}
             </div>
             
-            <div className="flex-1 w-full">
+            <div className="flex-1 w-full min-w-0">
               {/* Rating Selector */}
-              <div className="flex items-center gap-1 mb-3">
+              <div className="flex items-center gap-1 mb-3 flex-wrap">
                 <span className="text-sm text-foreground/70 mr-2 font-medium">Rating (optional):</span>
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -127,7 +127,7 @@ export default function ProjectComments({ projectId, comments, currentUser }: Pr
           </div>
         </form>
       ) : (
-        <div className="mb-12 bg-card p-6 rounded-xl border border-border text-center">
+        <div className="mb-10 bg-card p-6 rounded-xl border border-border text-center">
           <p className="text-foreground/70 mb-4">You must be logged in to leave a review or comment.</p>
           <Link 
             href={`/login?next=/project/${projectId}`}
@@ -153,7 +153,7 @@ export default function ProjectComments({ projectId, comments, currentUser }: Pr
                 )}
               </Link>
               
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="bg-card p-4 rounded-xl border border-border">
                   <div className="flex justify-between items-start mb-2 gap-2 flex-wrap">
                     <div className="min-w-0">
