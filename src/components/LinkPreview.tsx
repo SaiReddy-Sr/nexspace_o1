@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 export default function LinkPreview({ url, displayMode = 'card' }: { url: string, displayMode?: 'card' | 'thumbnail' }) {
-  const [data, setData] = useState<{ title?: string, description?: string, image?: string } | null>(null)
+  const [data, setData] = useState<{ title?: string, description?: string, image?: string, logo?: string } | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -57,10 +57,14 @@ export default function LinkPreview({ url, displayMode = 'card' }: { url: string
         ) : (
           <div className="flex-1 w-full bg-[#161622] flex flex-col items-center justify-center border-b border-white/5 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent opacity-50" />
-            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-transform duration-500">
-              <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-              </svg>
+            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+              {data.logo ? (
+                <img src={data.logo} alt="Logo" className="w-8 h-8 object-contain" />
+              ) : (
+                <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              )}
             </div>
           </div>
         )}
@@ -68,6 +72,11 @@ export default function LinkPreview({ url, displayMode = 'card' }: { url: string
         {/* Text Section (Bottom 30%) */}
         <div className="h-[32%] min-h-[70px] w-full p-3 px-4 flex flex-col justify-center bg-background/40">
           <span className="text-[10px] text-accent font-mono uppercase tracking-widest mb-1 opacity-80 flex items-center gap-1.5">
+            {data.logo ? (
+              <img src={data.logo} alt="Domain" className="w-3 h-3 object-contain rounded-sm" />
+            ) : (
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+            )}
             {new URL(url).hostname}
           </span>
           <h4 className="text-sm font-bold text-foreground line-clamp-1 leading-tight group-hover:text-accent transition-colors">
@@ -99,7 +108,11 @@ export default function LinkPreview({ url, displayMode = 'card' }: { url: string
         {data.title && <h4 className="text-sm font-bold text-foreground line-clamp-1 mb-1">{data.title}</h4>}
         {data.description && <p className="text-xs text-foreground/60 line-clamp-2 leading-relaxed">{data.description}</p>}
         <span className="text-[10px] text-accent font-mono mt-2 flex items-center gap-1.5 opacity-80">
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          {data.logo ? (
+            <img src={data.logo} alt="Domain" className="w-3 h-3 object-contain rounded-sm" />
+          ) : (
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          )}
           {new URL(url).hostname}
         </span>
       </div>
