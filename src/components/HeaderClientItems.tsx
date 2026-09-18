@@ -37,11 +37,14 @@ export function HeaderLogo() {
 }
 
 
+import { UserSearchSuggestions } from './UserSearchSuggestions'
+
 export function HeaderSearchInput() {
   const { searchQuery, setSearchQuery } = useSearch()
+  const [isFocused, setIsFocused] = useState(false)
 
   return (
-    <div className="flex w-full max-w-[600px] mx-auto hidden sm:flex">
+    <div className="flex w-full max-w-[600px] mx-auto hidden sm:flex relative">
       <div className="relative flex-1">
         <input 
           id="global-search-input"
@@ -49,12 +52,20 @@ export function HeaderSearchInput() {
           placeholder="Search NexSpace..." 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           className="w-full bg-[#121212] border border-white/10 rounded-l-full py-2 px-4 text-[15px] text-white placeholder-white/40 focus:outline-none focus:border-accent focus:ml-0 transition-all shadow-inner"
         />
       </div>
       <button className="bg-white/10 border border-l-0 border-white/10 rounded-r-full px-5 flex items-center justify-center hover:bg-white/20 transition-colors">
         <Search className="w-[18px] h-[18px] text-white/70" />
       </button>
+
+      <UserSearchSuggestions 
+        query={searchQuery} 
+        isFocused={isFocused} 
+        onClose={() => setIsFocused(false)} 
+      />
     </div>
   )
 }

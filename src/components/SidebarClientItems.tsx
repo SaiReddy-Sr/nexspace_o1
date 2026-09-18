@@ -13,9 +13,10 @@ export function ClientSearchIcon({ isExpanded }: { isExpanded: boolean }) {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
     if (pathname === '/') {
-      const input = document.getElementById('global-search-input')
+      const input = document.getElementById('global-search-input') || document.getElementById('mobile-search-input')
       if (input) {
-        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        setTimeout(() => input.focus(), 300)
       }
     } else {
       router.push('/?focus=search')
