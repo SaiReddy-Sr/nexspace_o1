@@ -91,6 +91,21 @@ export function SettingsForm({ initialProfile }: { initialProfile: any }) {
           {loading ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
+
+      <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-end">
+        <button
+          type="button"
+          onClick={async () => {
+            const { createClient } = await import('@/lib/supabase/client')
+            const supabase = createClient()
+            await supabase.auth.signOut()
+            window.location.href = '/login'
+          }}
+          className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors"
+        >
+          Log Out
+        </button>
+      </div>
     </form>
   )
 }

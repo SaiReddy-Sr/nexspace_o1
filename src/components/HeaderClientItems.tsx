@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Search, User, LogIn, Settings } from 'lucide-react'
@@ -74,7 +74,11 @@ export function HeaderClientMenu({ user, username, avatarUrl }: { user: any, use
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const pathname = usePathname()
   const supabase = createClient()
+
+  const profilePath = username ? `/profile/${username}` : '/onboarding'
+  const isOnProfile = pathname === profilePath
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -96,6 +100,14 @@ export function HeaderClientMenu({ user, username, avatarUrl }: { user: any, use
     router.refresh()
   }
 
+  function handleAvatarClick() {
+    if (isOnProfile) {
+      setOpen(!open)
+    } else {
+      router.push(profilePath)
+    }
+  }
+
   if (!user) {
     return (
       <Link href="/login" className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors border border-border">
@@ -108,7 +120,7 @@ export function HeaderClientMenu({ user, username, avatarUrl }: { user: any, use
   return (
     <div className="relative" ref={menuRef}>
       <button 
-        onClick={() => setOpen(!open)}
+        onClick={handleAvatarClick}
         className="flex items-center justify-center w-10 h-10 rounded-full bg-border overflow-hidden border border-border hover:opacity-80 transition-opacity"
       >
         {avatarUrl ? (
@@ -121,20 +133,8 @@ export function HeaderClientMenu({ user, username, avatarUrl }: { user: any, use
       </button>
       
       {open && (
-        <div className="absolute top-[calc(100%+0.5rem)] right-0 bg-card border border-white/10 rounded-xl shadow-lg p-2 min-w-[160px] z-50 flex flex-col gap-1">
-           {username ? (
-             <Link href={`/profile/${username}`} onClick={() => setOpen(false)} className="px-3 py-2 text-sm text-foreground hover:bg-foreground/10 rounded-md transition-colors text-left w-full block">
-               View Profile
-             </Link>
-           ) : (
-             <Link href="/onboarding" onClick={() => setOpen(false)} className="px-3 py-2 text-sm text-accent hover:bg-foreground/10 rounded-md transition-colors text-left w-full block">
-               Complete Profile
-             </Link>
-           )}
-           <Link href="/settings" onClick={() => setOpen(false)} className="px-3 py-2 text-sm text-foreground hover:bg-foreground/10 rounded-md transition-colors text-left w-full flex items-center gap-2">
-             <Settings className="w-4 h-4" /> Settings
-           </Link>
-           <button onClick={handleLogout} className="px-3 py-2 text-sm text-foreground/70 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors text-left w-full">
+        <div className="absolute top-[calc(100%+0.5rem)] right-0 bg-card border border-white/10 rounded-xl shadow-lg p-2 min-w-[120px] z-50 flex flex-col gap-1">
+           <button onClick={handleLogout} className="px-3 py-2 text-sm font-medium text-foreground/70 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors text-left w-full">
              Log out
            </button>
         </div>
