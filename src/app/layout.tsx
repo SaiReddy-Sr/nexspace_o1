@@ -18,8 +18,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nexspacehole.vercel.app"),
   title: "NexSpace | Developer's Hub",
   description: "A community for developers and clients to connect, showcase side projects, and build amazing things together.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/nxs_logo.png",
+  },
+  openGraph: {
+    title: "NexSpace | Developer's Hub",
+    description: "A community for developers and clients to connect, showcase side projects, and build amazing things together.",
+    url: "https://nexspacehole.vercel.app",
+    siteName: "NexSpace",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NexSpace | Developer's Hub",
+    description: "A community for developers and clients to connect, showcase side projects, and build amazing things together.",
+  },
 };
 
 export default function RootLayout({
