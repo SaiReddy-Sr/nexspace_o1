@@ -21,7 +21,7 @@ export default function TrackButton({ targetProfileId, initialIsTracking, isLogg
     return (
       <Link
         href="/login"
-        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors bg-white/5 hover:bg-white/10 text-white rounded-lg border border-white/10 shadow-sm"
+        className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold transition-colors bg-white hover:bg-gray-200 text-black rounded-full shadow-sm"
       >
         <RefreshCw className="w-4 h-4 mr-2" />
         Track
@@ -52,10 +52,10 @@ export default function TrackButton({ targetProfileId, initialIsTracking, isLogg
     <button
       onClick={handleToggle}
       disabled={loading}
-      className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors rounded-lg border shadow-sm ${
+      className={`inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold transition-colors rounded-full shadow-sm ${
         isTracking
-          ? 'bg-accent/20 text-accent border-accent/30 hover:bg-accent/30'
-          : 'bg-white/5 text-white border-white/10 hover:bg-white/10'
+          ? 'bg-[#1E1E2E] text-white border border-white/20 hover:bg-white/10'
+          : 'bg-white hover:bg-gray-200 text-black border border-transparent'
       } disabled:opacity-70 disabled:cursor-not-allowed`}
     >
       <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
