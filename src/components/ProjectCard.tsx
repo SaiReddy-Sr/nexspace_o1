@@ -45,10 +45,10 @@ export default function ProjectCard({ project, isOwner, hasVoted = false, isLogg
       )}
 
       {/* Thumbnail */}
-      <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-black/40 aspect-[16/9] w-full mb-4 border border-white/5">
-        <div className="relative z-1 flex items-center justify-center w-full h-full">
-          {project.media_url ? (
-            project.media_type === 'video' ? (
+      {project.media_url && (
+        <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-black/40 aspect-[16/9] w-full mb-4 border border-white/5">
+          <div className="relative z-1 flex items-center justify-center w-full h-full">
+            {project.media_type === 'video' ? (
               <video
                 src={project.media_url}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -64,16 +64,10 @@ export default function ProjectCard({ project, isOwner, hasVoted = false, isLogg
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
-            )
-          ) : project.live_url ? (
-            <LinkPreview url={project.live_url} displayMode="thumbnail" />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center p-6 text-center">
-              <span className="text-white/60 font-semibold text-lg line-clamp-2">{project.title}</span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Content */}
       <div className="flex flex-col flex-1 min-w-0">
