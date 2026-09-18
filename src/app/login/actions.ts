@@ -4,20 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
-export async function loginWithPassword(email: string, password: string): Promise<{ error?: string }> {
-  const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  redirect('/onboarding')
-}
 
 export async function loginWithOtp(email: string): Promise<{ error?: string, success?: boolean }> {
   const supabase = await createClient()
@@ -39,9 +26,12 @@ export async function loginWithOtp(email: string): Promise<{ error?: string, suc
 export async function verifyOtp(email: string, token: string): Promise<{ error?: string }> {
   const supabase = await createClient()
 
+  // Clean the token of any whitespace or non-numeric characters
+  const cleanToken = token.replace(/\D/g, '')
+
   const { error } = await supabase.auth.verifyOtp({
     email,
-    token,
+    token: cleanToken,
     type: 'email',
   })
 

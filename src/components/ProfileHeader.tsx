@@ -73,7 +73,7 @@ export default function ProfileHeader({ profile, isOwner, stats, isTracking = fa
           
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 w-full sm:w-auto">
             {/* Avatar & Stats */}
-            <div className="flex items-end justify-center sm:justify-start gap-6 sm:gap-8 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end justify-center sm:justify-start gap-4 sm:gap-8 w-full sm:w-auto">
               <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-background bg-[#1E1E2E] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-lg relative z-10">
                 {profile.avatar_url ? (
                   <img src={profile.avatar_url} alt={profile.username} className="h-full w-full object-cover" />
@@ -84,7 +84,7 @@ export default function ProfileHeader({ profile, isOwner, stats, isTracking = fa
                 )}
               </div>
               
-              <div className="flex gap-6 sm:mb-4 mb-2">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 sm:mb-4 mb-0">
                 {profile.role === 'client' ? (
                   <div className="flex flex-col items-center sm:items-start">
                     <span className="text-xl sm:text-2xl font-extrabold text-white">{stats?.requests || 0}</span>
