@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NexSpace: The Developer-Client Nexus",
+  title: "NexSpace | Developer's Hub",
   description: "A community for developers and clients to connect, showcase side projects, and build amazing things together.",
 };
 
