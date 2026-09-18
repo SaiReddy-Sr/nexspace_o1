@@ -62,8 +62,8 @@ export default function ProjectFeed({ initialProjects, user, role, initialUserVo
         setTimeout(() => {
           const input = document.getElementById('global-search-input') || document.getElementById('mobile-search-input')
           if (input) {
+            input.focus()
             input.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            setTimeout(() => input.focus(), 300)
           }
         }, 100)
         
