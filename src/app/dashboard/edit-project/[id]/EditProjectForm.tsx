@@ -24,6 +24,7 @@ export default function EditProjectForm({ project }: { project: any }) {
   const [liveUrl, setLiveUrl] = useState(project.live_url || '')
   const [githubUrl, setGithubUrl] = useState(project.github_repo_url || '')
   const [isFetchingReadme, setIsFetchingReadme] = useState(false)
+  const [showLinkPreview, setShowLinkPreview] = useState(project.show_link_preview !== false)
 
   function handleUploadComplete(url: string, type: 'image' | 'video') {
     setMediaUrl(url)
@@ -148,59 +149,77 @@ export default function EditProjectForm({ project }: { project: any }) {
             <ProjectMediaUploader onUploadComplete={handleUploadComplete} />
           </div>
           
-          {mediaUrl && (
-            <div className="bg-accent/5 border border-accent/20 rounded-xl p-5 flex flex-col gap-4 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="bg-accent/20 p-2 rounded-full">
-                  <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
+          {/* Feed Media Preview */}
+          <div className="bg-background/50 rounded-2xl p-5 border border-border/50 space-y-4">
+            <div>
+              <h4 className="text-base font-bold text-foreground">Feed Media Preview</h4>
+              <p className="text-sm text-foreground/60">This shows exactly how your project's media will appear on the home feed.</p>
+            </div>
+            
+            {mediaUrl ? (
+              <div className="bg-accent/5 border border-accent/20 rounded-xl p-4 flex flex-col gap-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-accent">Custom Media ({mediaType})</span>
+                  <button 
+                    type="button" 
+                    onClick={() => { setMediaUrl(undefined); setMediaType(undefined); }}
+                    className="text-xs font-bold text-red-400 hover:text-red-300 transition-colors px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-md"
+                  >
+                    Remove Media
+                  </button>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-base font-bold text-accent">Current Media ({mediaType})</h4>
-                    <button 
-                      type="button" 
-                      onClick={() => { setMediaUrl(undefined); setMediaType(undefined); }}
-                      className="text-xs font-bold text-red-400 hover:text-red-300 transition-colors px-2 py-1 bg-red-500/10 rounded-md"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <p className="text-sm text-foreground/70 mt-1 leading-relaxed">
-                    This is what is currently uploaded for your project.
-                  </p>
+                <div className="rounded-lg overflow-hidden border border-border/50 bg-black/40 flex items-center justify-center aspect-[16/9] w-full">
+                  {mediaType === 'video' ? (
+                    <video src={mediaUrl} controls className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={mediaUrl} alt="Project media" className="w-full h-full object-cover" />
+                  )}
                 </div>
               </div>
-              
-              <div className="rounded-lg overflow-hidden border border-border/50 bg-black/20 flex items-center justify-center max-h-[200px]">
-                {mediaType === 'video' ? (
-                  <video src={mediaUrl} controls className="max-w-full max-h-[200px]" />
+            ) : liveUrl ? (
+              <div className="space-y-4">
+                <div 
+                  className="flex items-center bg-card p-4 rounded-xl border border-border cursor-pointer hover:border-accent/50 transition-colors" 
+                  onClick={() => setShowLinkPreview(!showLinkPreview)}
+                >
+                  <input
+                    id="show_link_preview"
+                    name="show_link_preview"
+                    type="checkbox"
+                    checked={showLinkPreview}
+                    onChange={(e) => setShowLinkPreview(e.target.checked)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-4 h-4 text-accent bg-background border-border rounded focus:ring-accent focus:ring-2"
+                  />
+                  <label htmlFor="show_link_preview" className="ml-3 text-sm font-bold text-foreground/90 cursor-pointer flex-1">
+                    Generate Link Preview from Live URL
+                  </label>
+                </div>
+                
+                {showLinkPreview ? (
+                  <div className="relative rounded-xl overflow-hidden bg-black/40 aspect-[16/9] w-full border border-white/5 pointer-events-none">
+                    <LinkPreview url={liveUrl} displayMode="thumbnail" />
+                  </div>
                 ) : (
-                  <img src={mediaUrl} alt="Project media" className="max-w-full max-h-[200px] object-contain" />
+                  <div className="relative rounded-xl border border-border/50 border-dashed bg-background/50 aspect-[16/9] w-full flex flex-col items-center justify-center p-6 text-center">
+                    <svg className="w-8 h-8 text-foreground/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                    <span className="text-sm font-medium text-foreground/50">Compact Text-Only Card</span>
+                    <span className="text-xs text-foreground/40 mt-1 max-w-[80%]">Your project will appear without a large media box in the feed.</span>
+                  </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Link Preview Settings */}
-          <div className="bg-background/50 rounded-2xl p-4 border border-border/50">
-            <div className="flex items-center">
-              <input
-                id="show_link_preview"
-                name="show_link_preview"
-                type="checkbox"
-                defaultChecked={project.show_link_preview !== false}
-                className="w-4 h-4 text-accent bg-background border-border rounded focus:ring-accent focus:ring-2"
-              />
-              <label htmlFor="show_link_preview" className="ml-2 text-sm font-bold text-foreground/90">
-                Generate Link Preview if no media is provided
-              </label>
-            </div>
-            {liveUrl && (
-              <div className="mt-4">
-                <LinkPreview url={liveUrl} displayMode="card" />
+            ) : (
+              <div className="relative rounded-xl border border-border/50 border-dashed bg-background/50 aspect-[16/9] w-full flex flex-col items-center justify-center p-6 text-center">
+                 <span className="text-sm font-medium text-foreground/50">No Media</span>
+                 <span className="text-xs text-foreground/40 mt-1 max-w-[80%]">Upload media or add a Live URL to generate a preview.</span>
               </div>
+            )}
+            
+            {/* Hidden input to ensure state is submitted even if checkbox isn't visible */}
+            {(!liveUrl || mediaUrl) && showLinkPreview && (
+              <input type="hidden" name="show_link_preview" value="on" />
             )}
           </div>
 
