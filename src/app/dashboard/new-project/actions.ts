@@ -27,6 +27,7 @@ export async function createProject(formData: FormData, mediaUrl?: string, media
   const techTagsStr = formData.get('tech_tags') as string
   const liveUrl = formData.get('live_url') as string
   const githubRepoUrl = formData.get('github_repo_url') as string
+  const showLinkPreview = formData.get('show_link_preview') === 'on'
 
   if (!title) {
     return { error: 'Title is required.' }
@@ -54,6 +55,7 @@ export async function createProject(formData: FormData, mediaUrl?: string, media
     github_repo_url: githubRepoUrl || null,
     media_url: mediaUrl || null,
     media_type: mediaType || 'image',
+    show_link_preview: showLinkPreview,
   })
 
   if (error) {

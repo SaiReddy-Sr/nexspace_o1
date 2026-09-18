@@ -113,6 +113,18 @@ export default function EditProjectForm({ project }: { project: any }) {
                 <LinkPreview url={liveUrl} displayMode="card" />
               </div>
             )}
+            <div className="mt-4 flex items-center">
+              <input
+                id="show_link_preview"
+                name="show_link_preview"
+                type="checkbox"
+                defaultChecked={project.show_link_preview !== false}
+                className="w-4 h-4 text-accent bg-background border-border rounded focus:ring-accent focus:ring-2"
+              />
+              <label htmlFor="show_link_preview" className="ml-2 text-sm font-medium text-foreground/90">
+                Generate Link Preview if no media is provided
+              </label>
+            </div>
           </div>
 
           <div>

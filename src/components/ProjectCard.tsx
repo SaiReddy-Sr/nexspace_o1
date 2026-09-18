@@ -22,6 +22,7 @@ interface Project {
   featured?: boolean
   featured_position?: number | null
   vote_count: number
+  show_link_preview?: boolean
 }
 
 export default function ProjectCard({ project, isOwner, hasVoted = false, isLoggedIn = false }: { project: Project, isOwner?: boolean, hasVoted?: boolean, isLoggedIn?: boolean }) {
@@ -44,27 +45,31 @@ export default function ProjectCard({ project, isOwner, hasVoted = false, isLogg
         </div>
       )}
 
-      {/* Thumbnail */}
-      {project.media_url && (
+      {/* Thumbnail or Link Preview */}
+      {(project.media_url || (project.live_url && project.show_link_preview !== false)) && (
         <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-black/40 aspect-[16/9] w-full mb-4 border border-white/5">
           <div className="relative z-1 flex items-center justify-center w-full h-full">
-            {project.media_type === 'video' ? (
-              <video
-                src={project.media_url}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                muted
-                loop
-                autoPlay
-                playsInline
-              />
-            ) : (
-              <img
-                src={project.media_url}
-                alt={project.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
-            )}
+            {project.media_url ? (
+              project.media_type === 'video' ? (
+                <video
+                  src={project.media_url}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  muted
+                  loop
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={project.media_url}
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              )
+            ) : project.live_url && project.show_link_preview !== false ? (
+              <LinkPreview url={project.live_url} displayMode="thumbnail" />
+            ) : null}
           </div>
         </div>
       )}
