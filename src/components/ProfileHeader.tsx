@@ -119,7 +119,7 @@ export default function ProfileHeader({ profile, isOwner, stats, isTracking = fa
                 onClick={handleShare}
                 className="px-5 py-2 rounded-full border border-white/20 bg-[#1E1E2E] hover:bg-white/10 text-sm font-bold text-white transition-colors shadow-sm flex items-center gap-2"
               >
-                <Share2 className="w-4 h-4" /> Share
+                <Share2 className="w-4 h-4" /> Public URL
               </button>
               {isOwner ? (
                 <button 
@@ -143,7 +143,7 @@ export default function ProfileHeader({ profile, isOwner, stats, isTracking = fa
             <button 
               onClick={handleShare}
               className="p-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-colors shadow-sm"
-              title="Share Profile"
+              title="Public URL"
             >
               {copied ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
             </button>
