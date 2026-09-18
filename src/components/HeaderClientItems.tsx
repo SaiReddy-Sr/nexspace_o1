@@ -88,7 +88,7 @@ export function HeaderClientMenu({ user, username, avatarUrl }: { user: any, use
   if (!user) {
     return (
       <Link href="/login" className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-foreground/10 text-foreground/70 hover:text-foreground transition-colors border border-border">
-        <LogIn className="w-[18px] h-[18px]" strokeWidth={2.0} />
+        <User className="w-[18px] h-[18px]" strokeWidth={2.0} />
         <span className="sr-only">Log in</span>
       </Link>
     )
