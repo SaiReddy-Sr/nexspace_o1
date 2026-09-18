@@ -37,11 +37,13 @@ export default function LoginPage() {
     setLoading(false)
   }
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setLoading(true)
     setError('')
     setMessage('')
     
+    const formData = new FormData(e.currentTarget)
     if (!otpSent) {
       const email = formData.get('email') as string
       await handleSendOtp(email)
@@ -71,7 +73,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form action={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-5">
             {!otpSent ? (
               <div className="relative">
