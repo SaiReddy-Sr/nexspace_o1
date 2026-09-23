@@ -155,7 +155,7 @@ export default function EditNotePage({ params }: { params: Promise<{ id: string 
       <div className="flex items-center justify-between">
         <Link href="/brain" className="text-white/50 hover:text-white inline-flex items-center gap-2 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          Back to Brain
+          Back to Workspace
         </Link>
         <div className="flex items-center gap-3">
           <div className="flex bg-[#1E1E2E] rounded-lg p-1 border border-white/10">

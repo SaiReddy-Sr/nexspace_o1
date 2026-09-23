@@ -56,8 +56,8 @@ export default function BrainDashboard() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out fill-mode-both">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Second Brain</h1>
-          <p className="text-white/60 mt-1">Capture, organize, and retrieve your learnings.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Saved Workspace</h1>
+          <p className="text-white/60 mt-1">Organize code snippets, technical notes, and bookmarked projects.</p>
         </div>
         <Link href="/brain/new" className="bg-white text-black hover:bg-white/90 px-4 py-2 rounded-xl font-medium inline-flex items-center gap-2 transition-colors">
           <Plus className="w-5 h-5" />
@@ -72,7 +72,7 @@ export default function BrainDashboard() {
         <input
           type="text"
           className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-[#1E1E2E] text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent transition-all sm:text-sm"
-          placeholder="Search your brain..."
+          placeholder="Search your workspace..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />

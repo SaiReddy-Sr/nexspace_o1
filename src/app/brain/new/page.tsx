@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { ArrowLeft, Save, Code2, FileText, Tag as TagIcon, X } from 'lucide-react'
+import { ArrowLeft, Save, Code2, FileText, Tag as TagIcon, X, FolderOpen } from 'lucide-react'
 import Link from 'next/link'
+import { createNode } from '@/app/brain/actions'
+import { BrainCollection } from '@/types/brain'
 
 export default function NewNotePage() {
   const router = useRouter()
@@ -14,6 +16,24 @@ export default function NewNotePage() {
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [collections, setCollections] = useState<BrainCollection[]>([])
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null)
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
+  useEffect(() => {
+    async function loadCollections() {
+      const { data } = await supabase
+        .from('second_brain_collections')
+        .select('*')
+        .order('name', { ascending: true })
+      if (data) setCollections(data as BrainCollection[])
+    }
+    loadCollections()
+  }, [supabase])
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -37,74 +57,22 @@ export default function NewNotePage() {
     }
 
     setIsSaving(true)
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    const result = await createNode({
+      title,
+      content,
+      type,
+      tags,
+      collectionId: selectedCollectionId
+    })
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      alert('You must be logged in')
+    if (result.error) {
+      alert(result.error)
       setIsSaving(false)
       return
     }
 
-    // 1. Insert Node
-    const { data: nodeData, error: nodeError } = await supabase
-      .from('second_brain_nodes')
-      .insert({
-        user_id: user.id,
-        title,
-        content,
-        type
-      })
-      .select()
-      .single()
-
-    if (nodeError || !nodeData) {
-      console.error('Error saving node:', nodeError)
-      alert('Failed to save note')
-      setIsSaving(false)
-      return
-    }
-
-    // 2. Insert Tags (if any)
-    if (tags.length > 0) {
-      for (const tagName of tags) {
-        // Upsert tag
-        let tagId
-        const { data: existingTag } = await supabase
-          .from('second_brain_tags')
-          .select('id')
-          .eq('name', tagName)
-          .eq('user_id', user.id)
-          .single()
-
-        if (existingTag) {
-          tagId = existingTag.id
-        } else {
-          const { data: newTag } = await supabase
-            .from('second_brain_tags')
-            .insert({ name: tagName, user_id: user.id })
-            .select('id')
-            .single()
-          if (newTag) tagId = newTag.id
-        }
-
-        if (tagId) {
-          // Link tag to node
-          await supabase
-            .from('second_brain_node_tags')
-            .insert({
-              node_id: nodeData.id,
-              tag_id: tagId
-            })
-        }
-      }
-    }
-
+    // revalidatePath already called in server action — just navigate back
     router.push('/brain')
-    router.refresh()
   }
 
   return (
@@ -112,7 +80,7 @@ export default function NewNotePage() {
       <div className="flex items-center justify-between">
         <Link href="/brain" className="text-white/50 hover:text-white inline-flex items-center gap-2 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          Back to Brain
+          Back to Workspace
         </Link>
         <div className="flex items-center gap-3">
           <div className="flex bg-[#1E1E2E] rounded-lg p-1 border border-white/10">
@@ -131,7 +99,7 @@ export default function NewNotePage() {
               Snippet
             </button>
           </div>
-          <button 
+          <button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-white text-black hover:bg-white/90 px-5 py-2 rounded-xl font-medium inline-flex items-center gap-2 transition-colors disabled:opacity-50"
@@ -145,12 +113,33 @@ export default function NewNotePage() {
       <div className="space-y-4">
         <input
           type="text"
-          placeholder={type === 'note' ? "Note Title" : "Snippet Title"}
+          placeholder={type === 'note' ? 'Note Title' : 'Snippet Title'}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full bg-transparent text-4xl font-bold text-white placeholder-white/20 focus:outline-none focus:ring-0 border-none px-0"
         />
 
+        {/* Collection Picker */}
+        <div className="flex items-center gap-2">
+          <FolderOpen className="w-4 h-4 text-white/40 flex-shrink-0" />
+          <select
+            value={selectedCollectionId ?? ''}
+            onChange={(e) => setSelectedCollectionId(e.target.value || null)}
+            className="bg-[#1E1E2E] border border-white/10 text-sm text-white/70 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent cursor-pointer"
+          >
+            <option value="">No collection</option>
+            {collections.map((col) => (
+              <option key={col.id} value={col.id}>{col.name}</option>
+            ))}
+          </select>
+          {collections.length === 0 && (
+            <Link href="/brain/collections" className="text-xs text-white/40 hover:text-accent transition-colors">
+              Create a collection →
+            </Link>
+          )}
+        </div>
+
+        {/* Tags */}
         <div className="flex items-center gap-2 flex-wrap">
           <TagIcon className="w-4 h-4 text-white/40" />
           {tags.map(tag => (
@@ -173,7 +162,7 @@ export default function NewNotePage() {
 
         <div className="mt-8">
           <textarea
-            placeholder={type === 'note' ? "Start typing your note here (Markdown supported)..." : "Paste your code snippet here..."}
+            placeholder={type === 'note' ? 'Start typing your note here (Markdown supported)...' : 'Paste your code snippet here...'}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className={`w-full min-h-[400px] bg-[#1E1E2E]/50 border border-white/10 rounded-2xl p-6 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 resize-y transition-all ${type === 'snippet' ? 'font-mono text-sm leading-relaxed' : 'text-base leading-relaxed'}`}

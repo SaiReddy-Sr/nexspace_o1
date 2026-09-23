@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import BrainSidebar from '@/components/BrainSidebar'
 
 export const metadata: Metadata = {
-  title: 'Second Brain | NexSpace',
+  title: 'Saved Workspace | NexSpace',
   description: 'Your personal knowledge management system.',
 }
 

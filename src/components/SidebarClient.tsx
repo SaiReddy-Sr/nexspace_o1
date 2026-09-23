@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Home, Briefcase, PlusCircle, MessageSquare, Settings } from 'lucide-react'
+import { Home, Briefcase, PlusCircle, MessageSquare, Settings, BookMarked } from 'lucide-react'
 import { ClientSearchIcon } from './SidebarClientItems'
 import { NotificationsDrawer } from './NotificationsDrawer'
 import { useSidebar } from '@/lib/SidebarContext'
@@ -55,6 +55,14 @@ export function SidebarClient({ role, user }: { role: string | null, user: any }
           <Link href="/dashboard/messages" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
             <MessageSquare className={`w-6 h-6 ${isExpanded ? 'mb-1.5' : ''}`} strokeWidth={1.5} />
             {isExpanded && <span className="text-[10px] font-normal truncate w-full text-center px-1">Messages</span>}
+          </Link>
+        )}
+
+        {/* Saved Workspace */}
+        {user && (
+          <Link href="/brain" className="group flex flex-col items-center justify-center w-full h-[74px] hover:bg-white/10 text-white transition-colors rounded-lg mx-1">
+            <BookMarked className={`w-6 h-6 ${isExpanded ? 'mb-1.5' : ''}`} strokeWidth={1.5} />
+            {isExpanded && <span className="text-[10px] font-normal truncate w-full text-center px-1">Workspace</span>}
           </Link>
         )}
 

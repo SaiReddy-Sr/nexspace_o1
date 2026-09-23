@@ -2,24 +2,24 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BookOpen, Folder, Tag, Hash, FileText } from 'lucide-react'
+import { BookOpen, Folder, FileText } from 'lucide-react'
 
 export default function BrainSidebar() {
   const pathname = usePathname()
 
   const navItems = [
-    { name: 'All Notes', href: '/brain', icon: BookOpen },
+    { name: 'All Saved', href: '/brain', icon: BookOpen },
     { name: 'Collections', href: '/brain/collections', icon: Folder },
-    { name: 'Tags', href: '/brain/tags', icon: Tag },
+    { name: 'New Note/Snippet', href: '/brain/new', icon: FileText },
   ]
 
   return (
     <div className="w-64 bg-[#111118] border-r border-white/10 h-[calc(100vh-64px)] flex flex-col hidden md:flex sticky top-16">
       <div className="p-4">
-        <h2 className="text-sm font-semibold text-white/80 uppercase tracking-wider mb-4 px-2">Second Brain</h2>
+        <h2 className="text-sm font-semibold text-white/80 uppercase tracking-wider mb-4 px-2">Saved Workspace</h2>
         <nav className="space-y-1">
           {navItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href || (item.href !== '/brain' && pathname.startsWith(item.href))
             return (
               <Link
                 key={item.name}
@@ -44,7 +44,7 @@ export default function BrainSidebar() {
             <FileText className="w-16 h-16" />
           </div>
           <p className="text-xs text-white/60 relative z-10 leading-relaxed">
-            Your Second Brain is private. Only you can see your saved notes, snippets, and bookmarks.
+            Your Saved Workspace is private. Organize code snippets, technical notes, and bookmarked projects.
           </p>
         </div>
       </div>
