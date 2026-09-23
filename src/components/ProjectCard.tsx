@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import UpvoteButton from './UpvoteButton'
 import LinkPreview from './LinkPreview'
+import SaveToBrainButton from './SaveToBrainButton'
 
 interface Profile {
   username: string
@@ -110,13 +111,18 @@ export default function ProjectCard({ project, isOwner, hasVoted = false, isLogg
             </span>
           </Link>
 
-          <div className="flex-shrink-0">
-             <UpvoteButton
-                projectId={project.id}
-                initialVoteCount={project.vote_count || 0}
-                initialHasVoted={hasVoted}
-                isLoggedIn={isLoggedIn}
-              />
+          <div className="flex-shrink-0 flex items-center gap-2">
+            <SaveToBrainButton
+              projectId={project.id}
+              projectTitle={project.title}
+              isLoggedIn={isLoggedIn}
+            />
+            <UpvoteButton
+              projectId={project.id}
+              initialVoteCount={project.vote_count || 0}
+              initialHasVoted={hasVoted}
+              isLoggedIn={isLoggedIn}
+            />
           </div>
         </div>
       </div>
